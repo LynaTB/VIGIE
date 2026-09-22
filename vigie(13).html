@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vigie — la veille des appels à projets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0F1C; --ink:#ECEDF5; --surface:#141829; --surface-2:#1B2240; --paper:#0F1220; --line:#232B47;
+  --mute:#8C92B3; --mute-soft:#5C6286;
+  --upn:#C8102E; --upn-deep:#A50D26; --upn-bg:rgba(200,16,46,.13); --upn-glow:rgba(200,16,46,.22);
+  --brand:#E8A23D; --brand-deep:#D6912E; --brand-bg:rgba(232,162,61,.12);
+  --signal:#3FD2C7; --signal-bg:rgba(63,210,199,.12);
+  --urgent:#FF6B5E; --urgent-bg:rgba(255,107,94,.12);
+  --shs:#A78BFA; --shs-bg:rgba(167,139,250,.12);
+  --sante:#FF8585; --sante-bg:rgba(255,133,133,.12);
+  --sci:#52D69B; --sci-bg:rgba(82,214,155,.12);
+  --inter:#5EC4F2; --inter-bg:rgba(94,196,242,.12);
+  --cult:#F0A857; --cult-bg:rgba(240,168,87,.12);
+  --gen:#9CA3C0; --gen-bg:rgba(156,163,192,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;}
+body{background-image:
+  radial-gradient(ellipse at 0% 0%, rgba(200,16,46,.18), transparent 38%),
+  radial-gradient(circle at 85% 0%, rgba(232,162,61,.06), transparent 45%),
+  radial-gradient(circle at 0% 55%, rgba(63,210,199,.04), transparent 40%);
+background-attachment:fixed;}
+a{color:inherit;}
+button{font-family:inherit;}
+
+.shell{max-width:1180px;margin:0 auto;padding:0 28px 64px;}
+
+/* ===== MASTHEAD ===== */
+.masthead{position:relative;padding:38px 0 26px;border-bottom:1px solid var(--line);margin-bottom:0;}
+.upn-bar{
+  position:absolute; top:-38px; left:-28px; right:-28px; height:4px;
+  background:linear-gradient(90deg, var(--upn) 0%, var(--upn-deep) 60%, transparent 100%);
+}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:10px;}
+.masthead h1{
+  font-family:'Fraunces',serif;font-weight:600;font-size:40px;line-height:1.1;color:var(--ink);letter-spacing:-.01em;
+  border-left:4px solid var(--upn); padding-left:14px; margin-left:-18px;
+}
+.masthead .sub{font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:16px;color:var(--mute);margin-top:8px;max-width:480px; padding-left:14px; margin-left:-14px;}
+
+.radar-mark{
+  position:absolute; right:4px; top:30px;
+  width:100px;height:100px;border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+}
+.radar-mark .ring{position:absolute; border-radius:50%; border:1px solid var(--line);}
+.radar-mark .ring1{width:100%; height:100%;}
+.radar-mark .ring2{width:68%; height:68%;}
+.radar-mark .ring3{width:38%; height:38%; border-color:rgba(200,16,46,.5);}
+.radar-mark .sweep{
+  position:absolute; width:100%; height:100%; border-radius:50%;
+  background:conic-gradient(from 0deg, rgba(200,16,46,.6), rgba(232,162,61,.25) 15%, transparent 28%);
+  animation:sweep 4s linear infinite; mix-blend-mode:screen;
+}
+.radar-mark .core{position:absolute; width:7px; height:7px; border-radius:50%; background:var(--upn); box-shadow:0 0 10px 3px var(--upn-glow);}
+.radar-mark .rm-label{position:absolute; bottom:-26px; width:140px; text-align:center; font-family:'IBM Plex Mono'; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--mute);}
+.radar-mark .rm-label b{color:var(--upn); display:block; font-size:10px; letter-spacing:.12em;}
+@keyframes sweep{to{transform:rotate(360deg);}}
+
+/* ===== TABS ===== */
+.tabs-row{display:flex; gap:4px; margin-top:0; border-bottom:1px solid var(--line);}
+.tab-folder{
+  font-family:'IBM Plex Sans'; font-size:13.5px; font-weight:500; color:var(--mute-soft);
+  background:none; border:none; border-bottom:2px solid transparent;
+  padding:13px 16px 11px; cursor:pointer; position:relative; top:1px; transition:color .15s;
+}
+.tab-folder .count{font-family:'IBM Plex Mono'; font-size:11px; color:var(--mute-soft); margin-left:5px;}
+.tab-folder:hover{color:var(--ink);}
+.tab-folder.active{color:var(--ink); font-weight:600; border-bottom-color:var(--upn);}
+
+.btn-brand{background:var(--upn); color:#fff;}
+.btn-brand:hover{background:var(--upn-deep);}
+.btn-brand:disabled{background:var(--surface-2); color:var(--mute-soft); cursor:not-allowed;}
+
+.page{display:none; padding-top:26px;}
+.page.active{display:block;}
+
+/* ===== SEARCH RIBBON ===== */
+.ribbon{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:18px 20px; margin-bottom:20px;
+}
+.ribbon-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.search-slip{
+  flex:1; min-width:240px; display:flex; align-items:center; gap:8px;
+  background:var(--paper); border:1.5px solid var(--line); border-radius:7px; padding:0 12px; height:42px;
+}
+.search-slip svg{flex-shrink:0; opacity:.55;}
+.search-slip input{
+  flex:1; border:none; background:none; outline:none; font-family:'IBM Plex Sans'; font-size:13.5px; color:var(--ink); height:100%;
+}
+.search-slip input::placeholder{color:var(--mute-soft);}
+.btn{
+  height:42px; padding:0 18px; border-radius:7px; border:none; cursor:pointer;
+  font-family:'IBM Plex Sans'; font-size:13.5px; font-weight:600; display:inline-flex; align-items:center; gap:8px;
+  transition:background .15s, border-color .15s;
+}
+.btn-ghost{background:var(--surface-2); color:var(--ink); border:1.5px solid var(--line);}
+.btn-ghost:hover{border-color:var(--upn); color:var(--upn);}
+
+.domain-chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:14px;}
+.chip{
+  font-family:'IBM Plex Mono'; font-size:11px; letter-spacing:.03em; padding:5px 11px 5px 9px;
+  border-radius:5px; border:1.3px solid var(--line); background:var(--paper); color:var(--mute);
+  cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+}
+.chip .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.chip.active{border-color:currentColor; font-weight:600;}
+.chip[data-d="SHS"].active{color:var(--shs); background:var(--shs-bg);}
+.chip[data-d="Santé"].active{color:var(--sante); background:var(--sante-bg);}
+.chip[data-d="Sciences"].active{color:var(--sci); background:var(--sci-bg);}
+.chip[data-d="International"].active{color:var(--inter); background:var(--inter-bg);}
+.chip[data-d="Culture"].active{color:var(--cult); background:var(--cult-bg);}
+.chip[data-d="Général"].active{color:var(--gen); background:var(--gen-bg);}
+
+.method-note{font-size:12px; color:var(--mute-soft); margin-top:12px; line-height:1.5; max-width:760px;}
+
+/* ===== RESULT FILTERS ===== */
+.filter-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 16px; background:var(--surface); border:1px solid var(--line); border-radius:9px; margin-bottom:14px;}
+.filter-bar .f-label{font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--mute-soft);}
+.filter-bar select, .filter-bar input[type="number"]{
+  font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--ink); background:var(--paper);
+  border:1px solid var(--line); border-radius:5px; height:32px; padding:0 9px;
+}
+.filter-bar input[type="number"]{width:100px;}
+.filter-checkbox{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--mute); cursor:pointer;}
+.filter-checkbox input{accent-color:var(--brand); cursor:pointer;}
+.btn-reset-filters{font-family:'IBM Plex Sans'; font-size:11.5px; color:var(--mute-soft); background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:auto;}
+.btn-reset-filters:hover{color:var(--brand);}
+
+.star-btn{background:none; border:none; cursor:pointer; color:var(--mute-soft); font-size:15px; padding:2px 4px; line-height:1; flex-shrink:0;}
+.star-btn.active{color:var(--brand);}
+
+
+/* ===== RESULTS HEADER ===== */
+.results-header{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px;}
+.results-count{font-family:'IBM Plex Mono'; font-size:12px; color:var(--mute);}
+.results-count b{color:var(--ink);}
+.sort-select{font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--mute); border:1px solid var(--line); border-radius:5px; height:32px; padding:0 8px; background:var(--surface);}
+
+/* ===== REGISTRE TABLE ===== */
+.registre{width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+.registre thead th{
+  text-align:left; font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--mute-soft); padding:11px 14px; border-bottom:1px solid var(--line); background:var(--surface-2);
+}
+.registre tbody tr{border-bottom:1px solid var(--line);}
+.registre tbody tr:last-child{border-bottom:none;}
+.registre tbody tr:hover{background:var(--surface-2);}
+.registre td{padding:14px; vertical-align:top;}
+.domaine-dot-cell{width:14px; padding-right:0;}
+.domaine-dot{width:9px;height:9px;border-radius:50%;display:inline-block; margin-top:6px;}
+.cell-financeur{min-width:170px;}
+.cell-financeur .name{font-weight:600; font-size:13px; color:var(--ink);}
+.cell-financeur a.link-out{font-size:11px; color:var(--upn); text-decoration:none; display:inline-flex; align-items:center; gap:3px; margin-top:3px;}
+.cell-financeur a.link-out:hover{text-decoration:underline;}
+.cell-titre{min-width:260px;}
+.cell-titre .titre{font-weight:600; font-size:13px; color:var(--ink); line-height:1.4;}
+.cell-titre .desc{font-size:12px; color:var(--mute); line-height:1.5; margin-top:4px;}
+.cell-deadline{font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--ink); white-space:nowrap;}
+.cell-deadline .j{display:block; font-size:10.5px; color:var(--mute-soft); margin-top:2px;}
+.cell-deadline.urgent{color:var(--urgent);}
+.cell-action{text-align:right; white-space:nowrap;}
+
+.signal-badge{
+  display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono'; font-size:10px;
+  letter-spacing:.05em; text-transform:uppercase; padding:3px 8px 3px 7px; border:1px solid currentColor;
+  border-radius:20px; font-weight:600; white-space:nowrap;
+}
+.signal-badge .pip{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.signal-badge.urgent{color:var(--urgent); background:var(--urgent-bg);}
+.signal-badge.urgent .pip{animation:pulse-pip 1.4s ease-in-out infinite;}
+.signal-badge.nouveau{color:var(--sci); background:var(--sci-bg);}
+.signal-badge.verifie{color:var(--upn); background:var(--upn-bg);}
+.signal-badge.a-verifier{color:var(--mute-soft); border-style:dashed; background:none;}
+@keyframes pulse-pip{0%,100%{opacity:1; box-shadow:0 0 0 0 rgba(255,107,94,.5);} 50%{opacity:.6; box-shadow:0 0 0 4px rgba(255,107,94,0);}}
+
+.btn-save{
+  font-family:'IBM Plex Sans'; font-size:11.5px; font-weight:600; padding:6px 11px; border-radius:6px;
+  border:1.4px solid var(--line); background:var(--surface-2); color:var(--mute); cursor:pointer;
+}
+.btn-save.saved{border-color:var(--upn); color:var(--upn); background:var(--upn-bg);}
+.badge-stack{display:flex; flex-wrap:wrap; gap:4px;}
+.notif-dot{display:inline-flex; align-items:center; justify-content:center; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--urgent); color:#2A0E0A; font-family:'IBM Plex Mono'; font-size:9.5px; font-weight:700; margin-left:5px; vertical-align:2px;}
+
+/* ===== EMPTY / LOADING ===== */
+.empty-block{text-align:center; padding:64px 20px; color:var(--mute);}
+.empty-block .em-icon{font-family:'Fraunces',serif; font-size:38px; font-style:italic; color:var(--mute-soft); margin-bottom:10px;}
+.empty-block h3{font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink); margin-bottom:6px;}
+.empty-block p{font-size:12.5px; max-width:380px; margin:0 auto;}
+.loading-block{text-align:center; padding:50px 20px; color:var(--mute); font-size:13px;}
+.spinner{width:26px;height:26px;border:2.5px solid var(--line); border-top-color:var(--brand); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ===== FINANCEURS PAGE ===== */
+.az-nav{display:flex; gap:4px; flex-wrap:wrap; margin-bottom:18px;}
+.az-btn{font-family:'IBM Plex Mono'; font-size:11px; width:24px; height:24px; border-radius:4px; border:1px solid var(--line); background:var(--surface); color:var(--mute); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.az-btn:hover{border-color:var(--brand); color:var(--brand);}
+.letter-section{margin-bottom:6px;}
+.letter-head{font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:22px; color:var(--mute-soft); padding:14px 4px 6px;}
+.fin-row{display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--surface); border:1px solid var(--line); border-radius:7px; margin-bottom:6px;}
+.fin-row .domaine-dot{margin-top:0;}
+.fin-row .fname{flex:1; font-size:13px; font-weight:500; color:var(--ink);}
+.fin-row .fdomaine{font-family:'IBM Plex Mono'; font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:var(--mute-soft); width:90px;}
+.fin-row a.fin-link{font-size:11.5px; color:var(--upn); text-decoration:none; display:inline-flex; align-items:center; gap:4px;}
+.fin-row a.fin-link:hover{text-decoration:underline;}
+.fin-row .btn-verify{font-family:'IBM Plex Sans'; font-size:11px; font-weight:600; padding:5px 10px; border-radius:5px; border:1.3px solid var(--line); background:var(--paper); color:var(--mute); cursor:pointer;}
+.fin-row .btn-verify:hover{border-color:var(--brand); color:var(--brand);}
+.fin-count{font-family:'IBM Plex Mono'; font-size:12px; color:var(--mute); margin-bottom:14px;}
+
+/* ===== ACCUEIL / HOME ===== */
+.hero-row{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:22px;}
+.hero-stat{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px;}
+.hero-stat:first-child{border-top:3px solid var(--upn);}
+.hero-stat:nth-child(2){border-top:3px solid var(--brand);}
+.hero-stat:nth-child(3){border-top:3px solid var(--signal);}
+.chip[data-d=""].active{border-color:var(--upn); color:var(--upn); background:var(--upn-bg); font-weight:600;}
+.hero-stat .num{font-family:'Fraunces',serif; font-weight:600; font-size:28px; color:var(--ink);}
+.hero-stat .lbl{font-family:'IBM Plex Mono'; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--mute-soft); margin-top:4px;}
+
+.home-grid{display:grid; grid-template-columns:1.6fr 1fr; gap:18px; align-items:start;}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px 20px;}
+.panel h2{font-family:'Fraunces',serif; font-weight:600; font-size:16.5px; margin-bottom:3px;}
+.panel .panel-sub{font-size:11.5px; color:var(--mute-soft); margin-bottom:14px;}
+
+.feed-item{display:flex; gap:11px; padding:10px 0; border-bottom:1px solid var(--line);}
+.feed-item:last-child{border-bottom:none;}
+.feed-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'IBM Plex Mono';font-size:10px;font-weight:600;}
+.feed-icon.t-verif{background:var(--inter-bg); color:var(--inter);}
+.feed-icon.t-save{background:var(--shs-bg); color:var(--shs);}
+.feed-icon.t-alert{background:var(--brand-bg); color:var(--brand);}
+.feed-icon.t-cand{background:var(--sci-bg); color:var(--sci);}
+.feed-text{font-size:12.5px; color:var(--ink); line-height:1.5;}
+.feed-date{font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--mute-soft); margin-top:2px;}
+
+.mini-list{display:flex; flex-direction:column; gap:7px;}
+.mini-row{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 11px; background:var(--paper); border-radius:7px; font-size:12.5px;}
+.mini-row a{color:var(--brand); text-decoration:none; font-weight:600; font-size:11.5px; white-space:nowrap;}
+.mini-row a:hover{text-decoration:underline;}
+.mini-row span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.mini-empty{font-size:12px; color:var(--mute-soft); padding:6px 2px;}
+
+/* ===== ALERTES PAGE ===== */
+.alert-row{display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--surface); border:1px solid var(--line); border-radius:9px; margin-bottom:8px;}
+.alert-row .a-main{flex:1;}
+.alert-row .a-query{font-weight:600; font-size:13.5px; color:var(--ink);}
+.alert-row .a-meta{font-family:'IBM Plex Mono'; font-size:11px; color:var(--mute-soft); margin-top:3px;}
+.btn-del{font-family:'IBM Plex Sans'; font-size:11.5px; color:var(--mute-soft); background:none; border:none; cursor:pointer; padding:6px 4px;}
+.btn-del:hover{color:var(--urgent);}
+
+/* ===== CANDIDATURES PAGE ===== */
+.cand-toolbar{display:flex; justify-content:flex-end; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;}
+.cand-form{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-bottom:18px; display:none;}
+.cand-form.open{display:block;}
+.cand-form .form-title{font-family:'Fraunces',serif; font-weight:600; font-size:16px; margin-bottom:14px;}
+.cand-form .form-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:12px;}
+.cand-form .form-grid.full{grid-template-columns:1fr;}
+.cand-form label{font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--mute-soft); display:block; margin-bottom:5px;}
+.cand-form input, .cand-form select, .cand-form textarea{
+  width:100%; background:var(--paper); border:1.3px solid var(--line); border-radius:6px; color:var(--ink);
+  font-family:'IBM Plex Sans'; font-size:13px; padding:9px 10px; outline:none;
+}
+.cand-form input:focus, .cand-form select:focus, .cand-form textarea:focus{border-color:var(--brand);}
+.cand-form textarea{resize:vertical; min-height:54px; font-family:'IBM Plex Sans';}
+.cand-form .form-actions{display:flex; gap:8px; justify-content:flex-end;}
+
+.cand-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:14px;}
+.cand-card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px;}
+.cand-card .c-title{font-weight:600; font-size:13.5px; color:var(--ink); line-height:1.4;}
+.cand-card .c-fin{font-size:11.5px; color:var(--mute); margin-top:2px;}
+.cand-card .c-meta{display:flex; flex-wrap:wrap; gap:5px 12px; font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--mute-soft); margin:12px 0;}
+.cand-card .c-notes{font-size:12px; color:var(--mute); line-height:1.5; margin-bottom:12px; padding-top:8px; border-top:1px solid var(--line);}
+.cand-card .c-footer{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;}
+.cand-status{font-family:'IBM Plex Mono'; font-size:10.5px; padding:6px 9px; border-radius:6px; border:1px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer;}
+
+/* ===== CANDIDATURES DASHBOARD ===== */
+.cand-stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px;}
+.cs-stat{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px;}
+.cs-num{font-family:'Fraunces',serif; font-weight:600; font-size:24px; color:var(--ink);}
+.cs-lbl{font-family:'IBM Plex Mono'; font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--mute-soft); margin-top:3px; line-height:1.4;}
+.cs-bars{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 18px; margin-bottom:18px; display:flex; flex-direction:column; gap:9px;}
+.cs-bar-row{display:flex; align-items:center; gap:10px;}
+.cs-bar-label{font-size:11.5px; color:var(--mute); width:110px; flex-shrink:0;}
+.cs-bar-track{flex:1; height:7px; border-radius:4px; background:var(--paper); overflow:hidden;}
+.cs-bar-fill{height:100%; border-radius:4px;}
+.cs-bar-count{font-family:'IBM Plex Mono'; font-size:11px; color:var(--mute-soft); width:20px; text-align:right; flex-shrink:0;}
+
+@media (max-width:760px){
+  .cand-stats-grid{grid-template-columns:repeat(2,1fr);}
+  .cs-bar-label{width:80px; font-size:10.5px;}
+}
+
+/* ===== TOAST ===== */
+.toast{position:fixed; bottom:26px; right:26px; background:var(--surface-2); color:var(--ink); border:1px solid var(--line); padding:11px 18px; border-radius:8px; font-size:13px; font-family:'IBM Plex Sans'; transform:translateY(70px); opacity:0; transition:all .25s; z-index:200; display:flex; align-items:center; gap:8px; box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.toast::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--brand); flex-shrink:0;}
+.toast.show{transform:translateY(0); opacity:1;}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-thumb{background:var(--line); border-radius:8px;}
+
+@media (max-width:760px){
+  .shell{padding:0 16px 48px;}
+  .masthead h1{font-size:26px;}
+  .radar-mark{display:none;}
+  .registre thead{display:none;}
+  .registre, .registre tbody, .registre tr, .registre td{display:block; width:100%;}
+  .registre tr{padding:12px 0;}
+  .cell-action{text-align:left; margin-top:8px;}
+  .hero-row{grid-template-columns:repeat(2,1fr);}
+  .cand-form .form-grid{grid-template-columns:1fr;}
+  .home-grid{grid-template-columns:1fr;}
+}
+
+/* ===== NOUVEAUTÉS ===== */
+.recent-chip{
+  font-family:'IBM Plex Mono'; font-size:11px; padding:4px 10px; border-radius:20px;
+  border:1px dashed var(--line); background:none; color:var(--mute); cursor:pointer;
+}
+.recent-chip:hover{ border-color:var(--upn); color:var(--upn); }
+
+/* Modal note */
+.note-modal-overlay{
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.65);
+  align-items:center; justify-content:center; z-index:500;
+}
+.note-modal{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:24px; width:480px; max-width:95vw;
+}
+.note-modal h3{ font-family:'Fraunces',serif; font-size:18px; font-weight:600; color:var(--ink); margin-bottom:4px; }
+.note-modal .nmsub{ font-size:12px; color:var(--mute-soft); margin-bottom:14px; }
+.note-modal textarea{
+  width:100%; min-height:120px; resize:vertical; background:var(--paper);
+  border:1.3px solid var(--line); border-radius:6px; color:var(--ink);
+  font-family:'IBM Plex Sans'; font-size:13px; padding:10px; outline:none;
+}
+.note-modal textarea:focus{ border-color:var(--brand); }
+.note-modal .nm-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <div class="masthead">
+    <div class="upn-bar"></div>
+    <div class="eyebrow">DRED · Université Paris Nanterre</div>
+    <h1>Vigie</h1>
+    <div class="sub">Le radar des appels à projets — 123 financeurs scannés, vérifiés en direct.</div>
+    <div class="radar-mark">
+      <div class="ring ring1"></div>
+      <div class="ring ring2"></div>
+      <div class="ring ring3"></div>
+      <div class="sweep"></div>
+      <div class="core"></div>
+      <div class="rm-label"><b>Vigie active</b><span id="stamp-date">—</span></div>
+    </div>
+  </div>
+
+  <div class="tabs-row">
+    <button class="tab-folder active" data-tab="accueil" onclick="switchTab('accueil', this)">Accueil</button>
+    <button class="tab-folder" data-tab="veille" onclick="switchTab('veille', this)">Veille <span class="count" id="tab-count-veille"></span></button>
+    <button class="tab-folder" data-tab="alertes" onclick="switchTab('alertes', this)">Alertes <span class="count" id="tab-count-alertes"></span><span class="notif-dot" id="alert-notif" style="display:none;"></span></button>
+    <button class="tab-folder" data-tab="dossier" onclick="switchTab('dossier', this)">Dossier suivi <span class="count" id="tab-count-dossier"></span></button>
+    <button class="tab-folder" data-tab="financeurs" onclick="switchTab('financeurs', this)">Financeurs <span class="count" id="tab-count-financeurs"></span></button>
+    <button class="tab-folder" data-tab="dred" onclick="switchTab('dred', this)" style="margin-left:auto; opacity:.6; font-size:11.5px;">Vue DRED</button>
+  </div>
+
+  <!-- PAGE ACCUEIL (EC) -->
+  <div class="page active" id="page-accueil">
+    <div style="max-width:680px; margin:48px auto 0; text-align:center; padding:0 20px;">
+      <div style="font-family:'IBM Plex Mono'; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--upn); margin-bottom:14px;">Université Paris Nanterre · DRED</div>
+      <h2 style="font-family:'Fraunces',serif; font-size:32px; font-weight:600; color:var(--ink); margin-bottom:12px; line-height:1.2;">Trouvez vos prochains financements</h2>
+      <p style="font-size:15px; color:var(--mute); line-height:1.7; margin-bottom:36px;">Vigie surveille en continu 123 financeurs — ANR, Horizon Europe, fondations, ministères — et vous alerte dès qu'un appel à projets correspond à vos thématiques.</p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:48px;">
+        <button class="btn btn-brand" style="height:46px; padding:0 24px; font-size:15px;" onclick="switchTab('veille', document.querySelector('.tab-folder[data-tab=veille]'))">Lancer une recherche</button>
+        <button class="btn btn-ghost" style="height:46px; padding:0 20px; font-size:15px;" onclick="switchTab('alertes', document.querySelector('.tab-folder[data-tab=alertes]'))">Mes alertes</button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; text-align:left; margin-bottom:48px;">
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px; border-top:3px solid var(--upn);">
+          <div style="font-size:22px; margin-bottom:8px;">🔍</div>
+          <div style="font-weight:600; font-size:13px; margin-bottom:6px;">Scan en direct</div>
+          <div style="font-size:12px; color:var(--mute); line-height:1.5;">Vérification en temps réel sur les pages officielles des financeurs sélectionnés.</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px; border-top:3px solid var(--brand);">
+          <div style="font-size:22px; margin-bottom:8px;">🔔</div>
+          <div style="font-weight:600; font-size:13px; margin-bottom:6px;">Alertes personnalisées</div>
+          <div style="font-size:12px; color:var(--mute); line-height:1.5;">Enregistrez vos thématiques et soyez notifié à chaque nouveau signal.</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px; border-top:3px solid var(--signal);">
+          <div style="font-size:22px; margin-bottom:8px;">📂</div>
+          <div style="font-weight:600; font-size:13px; margin-bottom:6px;">Dossier suivi</div>
+          <div style="font-size:12px; color:var(--mute); line-height:1.5;">Sauvegardez les appels intéressants pour les retrouver et y revenir facilement.</div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:4px;">
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:22px; cursor:pointer; transition:border-color .15s;" onmouseenter="this.style.borderColor='var(--upn)'" onmouseleave="this.style.borderColor='var(--line)'" onclick="switchTab('veille', document.querySelector('.tab-folder[data-tab=veille]'))">
+          <div style="font-size:26px; margin-bottom:10px;">🔍</div>
+          <div style="font-weight:600; font-size:14px; color:var(--ink); margin-bottom:6px;">Je suis enseignant-chercheur</div>
+          <div style="font-size:12px; color:var(--mute); line-height:1.6;">Je cherche des financements pour mes projets de recherche.</div>
+          <div style="margin-top:14px; font-family:'IBM Plex Mono'; font-size:11px; color:var(--upn); letter-spacing:.04em;">Lancer une recherche →</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:22px; cursor:pointer; transition:border-color .15s;" onmouseenter="this.style.borderColor='var(--brand)'" onmouseleave="this.style.borderColor='var(--line)'" onclick="switchTab('dred', document.querySelector('.tab-folder[data-tab=dred]'))">
+          <div style="font-size:26px; margin-bottom:10px;">📊</div>
+          <div style="font-weight:600; font-size:14px; color:var(--ink); margin-bottom:6px;">Je suis de la DRED</div>
+          <div style="font-size:12px; color:var(--mute); line-height:1.6;">Je veux accéder au tableau de bord administratif.</div>
+          <div style="margin-top:14px; font-family:'IBM Plex Mono'; font-size:11px; color:var(--brand); letter-spacing:.04em;">Tableau de bord →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE DRED (dashboard admin) -->
+  <div class="page" id="page-dred">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+      <div>
+        <div style="font-family:'Fraunces',serif; font-size:22px; font-weight:600; color:var(--ink);">Vue DRED</div>
+        <div style="font-size:12px; color:var(--mute-soft); margin-top:3px;">Tableau de bord administratif — réservé à la DRED</div>
+      </div>
+      <button class="btn btn-ghost" style="font-size:12px;" onclick="switchTab('veille', document.querySelector('.tab-folder[data-tab=veille]'))">Aller à la Veille pour épingler →</button>
+    </div>
+    <div class="hero-row">
+      <div class="hero-stat"><div class="num" id="home-stat-fin">123</div><div class="lbl">Financeurs suivis</div></div>
+      <div class="hero-stat"><div class="num" id="home-stat-verif">0</div><div class="lbl">Scans effectués</div></div>
+      <div class="hero-stat"><div class="num" id="home-stat-dossier">0</div><div class="lbl">Appels en dossier</div></div>
+      <div class="hero-stat"><div class="num" id="home-stat-cand">0</div><div class="lbl">Candidatures</div></div>
+      <div class="hero-stat"><div class="num" id="home-stat-alertes">0</div><div class="lbl">Alertes actives</div></div>
+    </div>
+    <div class="home-grid">
+      <div class="panel">
+        <h2>Flux d'activité</h2>
+        <div class="panel-sub">Historique des vérifications, suivis et alertes de cette session</div>
+        <div id="activity-feed"></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="panel">
+          <h2>📊 Répartition des résultats</h2>
+          <div class="panel-sub">Domaines des appels trouvés lors de la session</div>
+          <div id="domain-stats"></div>
+        </div>
+        <div class="panel">
+          <h2>📌 Appels épinglés</h2>
+          <div class="panel-sub">Mis en avant pour toute l'équipe</div>
+          <div id="pinned-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Alertes actives</h2>
+          <div class="panel-sub">Recherches enregistrées, à relancer en un clic</div>
+          <div class="mini-list" id="home-alerts-mini"></div>
+        </div>
+        <div class="panel">
+          <h2>Financeurs à la une</h2>
+          <div class="panel-sub">Sélection dans la base interne</div>
+          <div class="mini-list" id="home-fin-spotlight"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE VEILLE -->
+  <div class="page" id="page-veille">
+    <div class="ribbon">
+      <div class="ribbon-row">
+        <div class="search-slip">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="search-input" placeholder="Thème, mot-clé ou nom de financeur…" />
+        </div>
+        <button class="btn btn-brand" id="search-btn" onclick="doVeille()">Lancer le scan</button>
+        <button class="btn btn-ghost" id="alert-btn" onclick="createAlertFromVeille()">Créer une alerte</button>
+      </div>
+      <div class="domain-chips" id="domain-chips">
+        <button class="chip active" data-d="">Tous domaines</button>
+        <button class="chip" data-d="SHS"><span class="dot" style="background:#A78BFA"></span>SHS</button>
+        <button class="chip" data-d="Santé"><span class="dot" style="background:#FF8585"></span>Santé</button>
+        <button class="chip" data-d="Sciences"><span class="dot" style="background:#52D69B"></span>Sciences</button>
+        <button class="chip" data-d="International"><span class="dot" style="background:#5EC4F2"></span>International</button>
+        <button class="chip" data-d="Culture"><span class="dot" style="background:#F0A857"></span>Culture</button>
+        <button class="chip" data-d="Général"><span class="dot" style="background:#9CA3C0"></span>Général</button>
+      </div>
+      <div class="method-note">Chaque scan interroge en direct les pages officielles des financeurs sélectionnés (recherche web réelle). Le lien affiché vers chaque financeur provient toujours de la base interne validée — il reste fiable même si aucun signal n'est confirmé pour le moment.</div>
+      <div id="recent-searches" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;"></div>
+    </div>
+
+    <div class="filter-bar">
+      <span class="f-label">Affiner :</span>
+      <select id="filter-echeance" onchange="applyVeilleFilters()">
+        <option value="">Toutes échéances</option>
+        <option value="30">– de 30 jours</option>
+        <option value="60">– de 60 jours</option>
+        <option value="90">– de 90 jours</option>
+      </select>
+      <input type="number" id="filter-montant" placeholder="Montant min €" min="0" step="1000" oninput="applyVeilleFilters()" />
+      <label class="filter-checkbox">
+        <input type="checkbox" id="filter-partner" onchange="applyVeilleFilters()" /> Financeurs partenaires uniquement
+      </label>
+      <button class="btn-reset-filters" onclick="resetVeilleFilters()">Réinitialiser</button>
+    </div>
+
+    <div class="results-header">
+      <div>
+        <div class="results-count" id="results-count">Sélectionnez un thème ou un domaine, puis lancez le scan.</div>
+        <div id="scan-freshness" style="font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--mute-soft); margin-top:2px;"></div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn-reset-filters" onclick="exportVeilleCSV()" style="color:var(--signal);">↓ Export CSV</button>
+        <select class="sort-select" id="sort-select" onchange="applyVeilleFilters()">
+          <option value="deadline">Tri : échéance proche</option>
+          <option value="financeur">Tri : financeur A→Z</option>
+          <option value="domaine">Tri : domaine</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="veille-results">
+      <div class="empty-block">
+        <div class="em-icon">Horizon dégagé</div>
+        <h3>Aucun scan lancé</h3>
+        <p>Saisissez un mot-clé ou choisissez un domaine, puis cliquez sur « Lancer le scan » pour interroger les financeurs correspondants.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE DOSSIER -->
+  <div class="page" id="page-dossier">
+    <div class="results-header">
+      <div class="results-count" id="dossier-count">0 appel suivi</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn-reset-filters" onclick="exportDossierCSV()" style="color:var(--signal);">↓ Export CSV</button>
+        <select class="sort-select" id="dossier-sort-select" onchange="renderDossier()">
+          <option value="deadline">Tri : échéance proche</option>
+          <option value="recent">Tri : ajout récent</option>
+          <option value="financeur">Tri : financeur A→Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-bar" style="margin-bottom:12px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--mute-soft);flex-shrink:0"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="dossier-search" placeholder="Filtrer par mot-clé, financeur…" oninput="renderDossier()" style="flex:1; border:none; background:none; outline:none; font-family:'IBM Plex Sans'; font-size:13px; color:var(--ink);" />
+    </div>
+    <div id="dossier-results">
+      <div class="empty-block">
+        <div class="em-icon">Dossier vide</div>
+        <h3>Aucun appel sauvegardé</h3>
+        <p>Sauvegardez un appel depuis l'onglet Veille pour le retrouver ici.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE ALERTES -->
+  <div class="page" id="page-alertes">
+    <div class="results-header">
+      <div class="results-count" id="alertes-count">0 alerte enregistrée</div>
+    </div>
+    <div id="alertes-list">
+      <div class="empty-block">
+        <div class="em-icon">Aucune alerte</div>
+        <h3>Pas encore d'alerte enregistrée</h3>
+        <p>Depuis l'onglet Veille, lancez une recherche puis cliquez sur « Créer une alerte » pour la retrouver ici et la relancer en un clic.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE FINANCEURS -->
+  <div class="page" id="page-financeurs">
+    <div class="ribbon">
+      <div class="ribbon-row">
+        <div class="search-slip">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="fin-search" placeholder="Filtrer les 123 financeurs…" oninput="renderFinanceurs()" />
+        </div>
+      </div>
+      <div class="domain-chips" id="fin-domain-chips">
+        <button class="chip active" data-d="">Tous domaines</button>
+        <button class="chip" data-d="SHS"><span class="dot" style="background:#A78BFA"></span>SHS</button>
+        <button class="chip" data-d="Santé"><span class="dot" style="background:#FF8585"></span>Santé</button>
+        <button class="chip" data-d="Sciences"><span class="dot" style="background:#52D69B"></span>Sciences</button>
+        <button class="chip" data-d="International"><span class="dot" style="background:#5EC4F2"></span>International</button>
+        <button class="chip" data-d="Culture"><span class="dot" style="background:#F0A857"></span>Culture</button>
+        <button class="chip" data-d="Général"><span class="dot" style="background:#9CA3C0"></span>Général</button>
+      </div>
+    </div>
+    <div class="az-nav" id="az-nav"></div>
+    <div class="fin-count" id="fin-count"></div>
+    <div id="fin-list"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Modal note financeur -->
+<div class="note-modal-overlay" id="note-modal" onclick="if(event.target===this)closeNoteModal()">
+  <div class="note-modal">
+    <h3 id="note-modal-title">Note</h3>
+    <div class="nmsub">Contact, historique, points de vigilance…</div>
+    <input type="hidden" id="note-modal-name" />
+    <textarea id="note-textarea" placeholder="Ex : Contact : Marie Dupont (m.dupont@fondation.fr) — Nous a financés en 2022 pour 80k€ — AAP publié chaque mars."></textarea>
+    <div class="nm-actions">
+      <button class="btn btn-ghost" onclick="closeNoteModal()">Annuler</button>
+      <button class="btn btn-brand" onclick="saveNoteModal()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const FINANCEURS = [
+  {
+    "name": "ApAhAu",
+    "url": "http://blog.apahau.org/category/bourses-et-postes-ouverts/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "CFHA",
+    "url": "https://cfha-web.fr/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "DFK Centre allemand d'histoire de l'art",
+    "url": "https://dfk-paris.org/fr/page/jeunes-chercheurs-8.html",
+    "domaine": "SHS"
+  },
+  {
+    "name": "DIM MAP",
+    "url": "https://www.dim-map.fr/",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "EUR Artec",
+    "url": "http://eur-artec.fr/recherche/appel-a-projets/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "FACE Foundation / Transatlantic Research Partnership",
+    "url": "https://face-foundation.org/transatlantic-study-research/transatlantic-research-partnership/application-guidelines/",
+    "domaine": "International"
+  },
+  {
+    "name": "Fondation Balzan",
+    "url": "https://www.balzan.org/fr/mises-a-jour/",
+    "domaine": "International"
+  },
+  {
+    "name": "Fondation des sciences du Patrimoine",
+    "url": "http://www.sciences-patrimoine.org/",
+    "domaine": "Culture"
+  },
+  {
+    "name": "Fondation Giacometti",
+    "url": "https://www.fondation-giacometti.fr/",
+    "domaine": "Culture"
+  },
+  {
+    "name": "Fondation Thiers",
+    "url": "http://fondation-thiers.institut-de-france.fr/actualites/candidatures-aux-bourses-allant-du-1er-septembre-2021-au-31-aout-2022",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Horizon Europe",
+    "url": "https://www.horizon-europe.gouv.fr",
+    "domaine": "International"
+  },
+  {
+    "name": "INHA",
+    "url": "https://www.inha.fr/fr/recherche/appels/appels-a-candidatures/appels-en-cours.html",
+    "domaine": "Culture"
+  },
+  {
+    "name": "Kluge Fellowships",
+    "url": "https://www.loc.gov/programs/john-w-kluge-center/chairs-fellowships/fellowships/kluge-fellowships/",
+    "domaine": "International"
+  },
+  {
+    "name": "Mémoire des hommes",
+    "url": "https://www.memoiredeshommes.sga.defense.gouv.fr/fr/article.php?larub=327&titre=recherche-historique",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Ministère de la culture",
+    "url": "https://www.culture.gouv.fr/Aides-demarches/Appels-a-projets",
+    "domaine": "Culture"
+  },
+  {
+    "name": "MSH Paris Nord",
+    "url": "https://www.mshparisnord.fr/programmes/appel-a-projet-msh-paris-nord/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Musée du Quai Branly",
+    "url": "http://www.quaibranly.fr/fr/recherche-scientifique/activites/bourses-et-prix-de-these/",
+    "domaine": "Culture"
+  },
+  {
+    "name": "ResEFE",
+    "url": "https://www.resefe.fr/appels-a-candidature",
+    "domaine": "International"
+  },
+  {
+    "name": "TERRA Foundation for American Art",
+    "url": "https://www.terraamericanart.org/what-we-offer/grant-fellowship-opportunities/",
+    "domaine": "Culture"
+  },
+  {
+    "name": "Villa Albertine",
+    "url": "https://villa-albertine.org/search?keyword=Grants+%26+Programs&category=professional",
+    "domaine": "International"
+  },
+  {
+    "name": "Villa Medici",
+    "url": "https://www.villamedici.it/fr/category/a-la-villa-fr/appels-a-projets/",
+    "domaine": "Culture"
+  },
+  {
+    "name": "AFLD",
+    "url": "https://acteurs-scientifiques.afld.fr/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Agence de la biomédecine",
+    "url": "https://www.agence-biomedecine.fr/GT-recherche",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Cancer-Fondation ARC pour la recherche sur le cancer",
+    "url": "https://www.fondation-arc.org/espace-chercheur",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Cancer-INCA",
+    "url": "https://www.e-cancer.fr/Institut-national-du-cancer/Appels-a-projets/Appels-a-projets-en-cours",
+    "domaine": "Santé"
+  },
+  {
+    "name": "CNAF",
+    "url": "https://www.caf.fr/presse-institutionnel/recherche-et-statistiques/recherche/appels-a-projets-de-recherche-et-appels-d-offre-en-cours",
+    "domaine": "Santé"
+  },
+  {
+    "name": "CNSA",
+    "url": "https://www.cnsa.fr/recherche-et-innovation/deposer-un-projet",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Fédération des Centres Mémoire",
+    "url": "https://www.centres-memoire.fr/category/appels-a-projets/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Fondation APICIL",
+    "url": "https://fondation-apicil.org/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Fondation de France",
+    "url": "https://www.fondationdefrance.org/fr/appels-a-projets",
+    "domaine": "Général"
+  },
+  {
+    "name": "Fondation John Bost",
+    "url": "https://www.johnbost.org/innovation/les-fondations-individualisees/fondation-recherche/appel-a-projets-fijbr/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Fondation maladies rares",
+    "url": "https://fondation-maladiesrares.org/le-financement-de-projets-scientifiques/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Fondation Mustela",
+    "url": "https://www.fondationmustela.com/prix-et-bourses",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Handicap FIRAH",
+    "url": "https://www.firah.org/fr/deposer-un-projet.html",
+    "domaine": "Santé"
+  },
+  {
+    "name": "INSERM",
+    "url": "https://pro.inserm.fr/project_call",
+    "domaine": "Santé"
+  },
+  {
+    "name": "IRESP",
+    "url": "https://www.iresp.net/financements/presentation-2/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "JANSSEN HORIZON",
+    "url": "https://janssenhorizon.org/janssen-horizon/notre-soutien-a-la-recherche",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Ligue contre le cancer",
+    "url": "https://www.ligue-cancer.net/article/27236_appels-projets-recherche",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Ministère des sports",
+    "url": "http://www.sports.gouv.fr/presse/",
+    "domaine": "Général"
+  },
+  {
+    "name": "OCIRP",
+    "url": "https://appelaprojets.fondation-ocirp.fr/fr/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "ONPE",
+    "url": "https://www.onpe.gouv.fr/actualite",
+    "domaine": "Santé"
+  },
+  {
+    "name": "PSYCHO CN2R centre national de ressources et de résilience",
+    "url": "http://cn2r.fr/promouvoir-la-recherche-scientifique/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Santé publique France",
+    "url": "https://www.santepubliquefrance.fr/etudes-et-enquetes",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Sidaction",
+    "url": "https://www.sidaction.org/soutien-la-recherche",
+    "domaine": "Santé"
+  },
+  {
+    "name": "VLM",
+    "url": "https://www.vaincrelamuco.org/guerir-demain/chercheurs/appel-projets-de-recherche-sur-la-mucoviscidose-2020-ap2020",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Les innopreneurs",
+    "url": "https://www.lesinnopreneurs.com/",
+    "domaine": "Général"
+  },
+  {
+    "name": "FEMISE",
+    "url": "https://www.femise.org",
+    "domaine": "International"
+  },
+  {
+    "name": "Fondation EDF",
+    "url": "https://fondation.edf.com/deposez-un-projet/",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "Agence universitaire de la francophonie",
+    "url": "https://www.auf.org/",
+    "domaine": "International"
+  },
+  {
+    "name": "Gis Jeu et sociétés",
+    "url": "https://ludocorpus.org/appels-a-projets/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Ministère Egalité homme femmes",
+    "url": "https://www.egalite-femmes-hommes.gouv.fr/",
+    "domaine": "Général"
+  },
+  {
+    "name": "MSA",
+    "url": "https://www.msa.fr/lfy/web/msa/recherche-innovation",
+    "domaine": "Santé"
+  },
+  {
+    "name": "ANRS",
+    "url": "http://www.anrs.fr/fr/chercheurs/je-cherche-financer-mon-projet",
+    "domaine": "Santé"
+  },
+  {
+    "name": "GIS Asie",
+    "url": "http://www.gis-reseau-asie.org/fr/liste/appels-et-offres",
+    "domaine": "International"
+  },
+  {
+    "name": "MAE",
+    "url": "https://mae.hypotheses.org/appels",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Maison française d'Oxford",
+    "url": "https://mfo.web.ox.ac.uk/scholarships.fellowships#collapse1127001",
+    "domaine": "International"
+  },
+  {
+    "name": "INGE-Alliance nationale de coordination de la recherche pour l'énergie (ANCRE)",
+    "url": "https://www.allianceenergie.fr/",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "INOMICS",
+    "url": "https://inomics.com/fr",
+    "domaine": "Général"
+  },
+  {
+    "name": "Ministère de la Défense - AID",
+    "url": "https://www.defense.gouv.fr/aid/appels-a-projets",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "Partenariats Hubert Curien (PHC)",
+    "url": "https://www.campusfrance.org/fr/phc",
+    "domaine": "International"
+  },
+  {
+    "name": "Académie française",
+    "url": "http://www.academie-francaise.fr/les-prix-prix-litteraires/prix-de-fondations",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Agence française contre la corruption",
+    "url": "https://www.agence-francaise-anticorruption.gouv.fr/fr/appel-prestation-recherche-0",
+    "domaine": "Général"
+  },
+  {
+    "name": "AXA Chaires",
+    "url": "https://www.axa-research.org/fr/page/Chaires-AXA?xtatc=INT-1-%5BCHAIRES_AXA%5D",
+    "domaine": "Général"
+  },
+  {
+    "name": "AXA Postdocs",
+    "url": "https://www.axa-research.org/fr/page/bourses-Post-doctorales-axa",
+    "domaine": "Général"
+  },
+  {
+    "name": "AXA Research Fund",
+    "url": "https://www.axa-research.org/",
+    "domaine": "Général"
+  },
+  {
+    "name": "BNF",
+    "url": "https://www.bnf.fr/fr/appel-chercheurs",
+    "domaine": "Culture"
+  },
+  {
+    "name": "Caisse des dépôts",
+    "url": "https://www.achat.caissedesdepots.fr/",
+    "domaine": "Général"
+  },
+  {
+    "name": "DARES",
+    "url": "https://dares.travail-emploi.gouv.fr/dares-etudes-et-statistiques/colloques-et-appels-a-projets/appels-a-projets-et-marches-d-etudes/",
+    "domaine": "Général"
+  },
+  {
+    "name": "Défenseur des droits",
+    "url": "https://www.defenseurdesdroits.fr",
+    "domaine": "Général"
+  },
+  {
+    "name": "Direction générale des entreprises",
+    "url": "https://www.entreprises.gouv.fr/a-votre-service/appels-a-projets",
+    "domaine": "Général"
+  },
+  {
+    "name": "Fondation des Treilles",
+    "url": "https://www.les-treilles.com/activites-dates-decheance/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "France Stratégie",
+    "url": "https://www.strategie.gouv.fr/actualites",
+    "domaine": "Général"
+  },
+  {
+    "name": "IEA PARIS",
+    "url": "https://www.paris-iea.fr/fr/gestion-des-candidatures/gestionnaire-appels",
+    "domaine": "SHS"
+  },
+  {
+    "name": "IERDJ (ancienne mission Droit et Justice)",
+    "url": "https://gip-ierdj.fr/fr/collaborer/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Ile de France",
+    "url": "https://www.iledefrance.fr/aides-services",
+    "domaine": "Général"
+  },
+  {
+    "name": "IUF",
+    "url": "http://www.iufrance.fr/",
+    "domaine": "Général"
+  },
+  {
+    "name": "Ministère de l'écologie",
+    "url": "https://www.ecologique-solidaire.gouv.fr/politiques/programmes-recherche",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "Ministère du travail",
+    "url": "https://dares.travail-emploi.gouv.fr/dares-etudes-et-statistiques/colloques-et-appels-a-projets/appels-a-projets-et-marches-d-etudes/appels-a-projets-de-recherche-et-marches-d-etude/",
+    "domaine": "Général"
+  },
+  {
+    "name": "PLACE Achats de l'état",
+    "url": "https://www.marches-publics.gouv.fr/?page=entreprise.AccueilEntreprise",
+    "domaine": "Général"
+  },
+  {
+    "name": "Sécurité routière",
+    "url": "https://www.onisr.securite-routiere.gouv.fr/politique-de-securite-routiere/appel-a-projets",
+    "domaine": "Général"
+  },
+  {
+    "name": "UPL",
+    "url": "https://www.u-plum.fr/appels-a-projets-recherche/de-lupl/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "ANSES",
+    "url": "https://www.anses.fr/fr/liste-appel-projet-de-recherche",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Campus Condorcet",
+    "url": "https://www.campus-condorcet.fr/pour-la-recherche/les-appels-a-projets",
+    "domaine": "SHS"
+  },
+  {
+    "name": "CNAM",
+    "url": "http://recherche.cnam.fr/opportunites-de-financement-prix/opportunites-de-financement-appels-a-projets-prix-714542.kjsp?RH=rech_valo",
+    "domaine": "Général"
+  },
+  {
+    "name": "COFECUB ECOS",
+    "url": "https://www.univ-paris13.fr/?s=ecos",
+    "domaine": "International"
+  },
+  {
+    "name": "DIM",
+    "url": "https://www.iledefrance.fr/des-aides-la-recherche-pour-13-domaines-dinteret-majeur",
+    "domaine": "Général"
+  },
+  {
+    "name": "EN3S",
+    "url": "https://en3s.fr/recherche-et-publications/etudes-et-projets-de-recherche/",
+    "domaine": "Général"
+  },
+  {
+    "name": "FMSH",
+    "url": "https://www.fmsh.fr/fr/international",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Fondation Croix-Rouge",
+    "url": "https://www.fondation-croix-rouge.fr/espace-chercheurs/appels-a-candidatures-2/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Fulbright France",
+    "url": "https://fulbright-france.org/fr/bourses-fulbright-partenaires/programmes",
+    "domaine": "International"
+  },
+  {
+    "name": "GIS Moyen-Orient et Mondes musulmans",
+    "url": "http://majlis-remomm.fr/category/appels-a-projets/appels-a-projets-du-gis",
+    "domaine": "SHS"
+  },
+  {
+    "name": "INSHS",
+    "url": "https://inshs.cnrs.fr/fr/appels-a-candidature",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Office français de la biodiversité",
+    "url": "https://ofb.gouv.fr/actualites?field_type_article_value%5Bap%5D=ap",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "Office franco allemand pour la Jeunesse (OFAJ)",
+    "url": "https://www.ofaj.org",
+    "domaine": "International"
+  },
+  {
+    "name": "Société d'ethnologie",
+    "url": "http://www.societe-ethnologie.fr/bourse-infos-pratiques.php",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Université franco-italienne",
+    "url": "https://www.universite-franco-italienne.org/menu-principal/appels-a-projets/",
+    "domaine": "International"
+  },
+  {
+    "name": "FEDER IDF",
+    "url": "https://www.europeidf.fr/jai-un-projet",
+    "domaine": "Général"
+  },
+  {
+    "name": "Fondation Martine Aublet",
+    "url": "https://www.fondationmartineaublet.fr/",
+    "domaine": "Culture"
+  },
+  {
+    "name": "Huma-num",
+    "url": "https://www.huma-num.fr/actualites-et-agenda/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Ministère des affaires étrangères",
+    "url": "https://www.diplomatie.gouv.fr/fr/politique-etrangere-de-la-france/action-exterieure-des-collectivites-territoriales/appels-a-projets-et-fonds-en-soutien-a-la-cooperation-decentralisee/",
+    "domaine": "International"
+  },
+  {
+    "name": "AIBL",
+    "url": "https://aibl.fr/prix/appel-a-candidatures/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Association Emilie Campmas",
+    "url": "https://sites.google.com/view/assemca/actions-scientifiques/prix-emilie-campmas",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Centre d'études franco-russes",
+    "url": "https://cefr-moscou.cnrs.fr/fr#bourses",
+    "domaine": "International"
+  },
+  {
+    "name": "CNES-AAP",
+    "url": "https://cnes-observatoire.fr/observatoire-espace-appels-projets.html",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "Fondation Carasso",
+    "url": "https://www.fondationcarasso.org",
+    "domaine": "Général"
+  },
+  {
+    "name": "Fondation pour la mémoire de l'esclavage",
+    "url": "https://memoire-esclavage.org",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Fonds France Canada pour la Recherche",
+    "url": "https://francecanadaculture.org/fr/programmes-et-appel-a-projects/",
+    "domaine": "International"
+  },
+  {
+    "name": "Institut des Amériques",
+    "url": "https://www.institutdesameriques.fr/agenda",
+    "domaine": "International"
+  },
+  {
+    "name": "Office allemand d'échanges universitaires",
+    "url": "https://www.daad-france.fr/fr/trouver-un-financement/",
+    "domaine": "International"
+  },
+  {
+    "name": "Académie des sciences",
+    "url": "https://www.academie-sciences.fr/fr/Prix-et-medailles/campagne-d-appels-a-candidatures.html",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "ANR",
+    "url": "https://anr.fr/fr/appels/",
+    "domaine": "Général"
+  },
+  {
+    "name": "Université franco-allemande",
+    "url": "https://www.dfh-ufa.org/fr/vous-etes/etablissements/appels-a-projets",
+    "domaine": "International"
+  },
+  {
+    "name": "AAP SHS",
+    "url": "http://aap-rechercheshs.fr/index.php",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Académie royale de Belgique (Prix)",
+    "url": "https://www.academieroyale.be/fr",
+    "domaine": "International"
+  },
+  {
+    "name": "ARS",
+    "url": "https://www.ars.sante.fr/liste-appels-projet-candidature-nationale",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Fondation Fritz Thyssen",
+    "url": "https://www.fritz-thyssen-stiftung.de/en/",
+    "domaine": "International"
+  },
+  {
+    "name": "GIS Etudes africaines en France",
+    "url": "http://etudes-africaines.cnrs.fr/lagenda-du-gis/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "GIS Institut du genre",
+    "url": "https://institut-du-genre.fr/fr/l-idg-soutient-la-recherche/",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Institut convergences migrations",
+    "url": "http://icmigrations.fr/category/actualite-de-la-recherche/?categories=appels-a-projets&order=publication&type=all",
+    "domaine": "SHS"
+  },
+  {
+    "name": "Leakey Foundation",
+    "url": "https://leakeyfoundation.org/grants/research-grants/",
+    "domaine": "Sciences"
+  },
+  {
+    "name": "Ministère de la santé",
+    "url": "https://drees.solidarites-sante.gouv.fr/etudes-et-statistiques/recherche/appels-a-projets-de-recherche/",
+    "domaine": "Santé"
+  },
+  {
+    "name": "Telethon",
+    "url": "https://www.afm-telethon.fr/guerir/appels-offres-937",
+    "domaine": "Santé"
+  },
+  {
+    "name": "INGE-RESPORE",
+    "url": "http://www.respore.fr/actualites?field_categorie_target_id=1",
+    "domaine": "Sciences"
+  }
+];
+
+const DOMAINE_COLORS = {
+  SHS:'#A78BFA', 'Santé':'#FF8585', Sciences:'#52D69B', International:'#5EC4F2', Culture:'#F0A857', 'Général':'#9CA3C0'
+};
+
+let savedItems = [];
+let activeVeilleDomaine = '';
+let activeFinDomaine = '';
+let lastResults = [];
+let lastScanKeys = []; // pour badge "Nouveau"
+let activityLog = [];
+let alertes = [];
+let candidatures = [];
+let partnerFinanceurs = [];
+let finNotes = {}; // notes par financeur
+let recentSearches = []; // historique des 5 dernières recherches
+let pinnedItems = []; // appels épinglés par la DRED
+let verifCount = 0;
+let lastScanTime = null;
+
+function updateTabCounts(){
+  document.getElementById('tab-count-dossier').textContent = savedItems.length ? `(${savedItems.length})` : '';
+  const alertTab = document.getElementById('tab-count-alertes');
+  if(alertTab) alertTab.textContent = alertes.length ? `(${alertes.length})` : '';
+}
+
+// ---------- INIT ----------
+function initStampDate(){
+  const d = new Date();
+  const months = ['JANV','FÉVR','MARS','AVR','MAI','JUIN','JUIL','AOÛT','SEPT','OCT','NOV','DÉC'];
+  document.getElementById('stamp-date').textContent = `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]}`;
+}
+initStampDate();
+
+document.getElementById('tab-count-financeurs').textContent = `(${FINANCEURS.length})`;
+
+// ---------- TABS ----------
+function switchTab(name, el){
+  document.querySelectorAll('.tab-folder').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id === 'page-'+name));
+  if(name === 'financeurs' && !document.getElementById('fin-list').dataset.built){
+    buildAzNav();
+    renderFinanceurs();
+    document.getElementById('fin-list').dataset.built = '1';
+  }
+  if(name === 'accueil') {}
+  if(name === 'dred') renderHome();
+  if(name === 'alertes'){
+    renderAlertes();
+    if(alertes.some(a=>a.newCount)){
+      alertes.forEach(a=>{ a.newCount = 0; });
+      persistAlertes();
+      updateAlertNotifBadge();
+    }
+  }
+}
+
+function filterByDomaine(d){
+  activeVeilleDomaine = d;
+  switchTab('veille', document.querySelector('.tab-folder[data-tab="veille"]'));
+  document.querySelectorAll('#domain-chips .chip').forEach(c=>c.classList.toggle('active', (c.dataset.d||'')===(d||'')));
+}
+
+// ---------- DOMAIN CHIPS (veille) ----------
+document.querySelectorAll('#domain-chips .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('#domain-chips .chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    activeVeilleDomaine = chip.dataset.d || '';
+  });
+});
+document.querySelectorAll('#fin-domain-chips .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('#fin-domain-chips .chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFinDomaine = chip.dataset.d || '';
+    renderFinanceurs();
+  });
+});
+
+// ---------- STORAGE ----------
+async function loadSaved(){
+  try{
+    const r = await window.storage.get('registre-dossier-v1');
+    if(r && r.value){ savedItems = JSON.parse(r.value); }
+  }catch(e){ savedItems = []; }
+  updateDossierUI();
+}
+async function persistSaved(){
+  try{ await window.storage.set('registre-dossier-v1', JSON.stringify(savedItems)); }catch(e){}
+}
+function itemKey(it){ return it.financeur + '::' + it.titre; }
+function isSaved(it){ return savedItems.some(s=>itemKey(s)===itemKey(it)); }
+function toggleSave(it){
+  const k = itemKey(it);
+  const idx = savedItems.findIndex(s=>itemKey(s)===k);
+  const saving = idx < 0;
+  if(saving){
+    const clean = {...it};
+    delete clean._isNew;
+    clean.addedAt = new Date().toISOString();
+    savedItems.push(clean);
+  } else {
+    savedItems.splice(idx,1);
+  }
+  persistSaved(); updateDossierUI();
+  renderVeilleResults(lastResults);
+  if(saving) addActivity('save', `Ajouté au dossier suivi : <b>${escapeHtml(it.titre)}</b> (${escapeHtml(it.financeur)})`);
+  showToast(saving ? 'Ajouté au dossier suivi' : 'Retiré du dossier suivi');
+}
+function updateDossierUI(){
+  document.getElementById('tab-count-dossier').textContent = savedItems.length ? `(${savedItems.length})` : '';
+  document.getElementById('dossier-count').textContent = `${savedItems.length} appel${savedItems.length===1?'':'s'} suivi${savedItems.length===1?'':'s'}`;
+  renderDossier();
+  renderHome();
+  updateTabCounts();
+}
+
+// ---------- ACCUEIL / ACTIVITÉ / ALERTES ----------
+async function loadExtras(){
+  try{ const r = await window.storage.get('registre-activity-v1'); if(r&&r.value) activityLog = JSON.parse(r.value); }catch(e){ activityLog = []; }
+  try{ const r = await window.storage.get('registre-alertes-v1'); if(r&&r.value) alertes = JSON.parse(r.value); }catch(e){ alertes = []; }
+  try{ const r = await window.storage.get('registre-candidatures-v1'); if(r&&r.value) candidatures = JSON.parse(r.value); }catch(e){ candidatures = []; }
+  try{ const r = await window.storage.get('registre-partners-v1'); if(r&&r.value) partnerFinanceurs = JSON.parse(r.value); }catch(e){ partnerFinanceurs = []; }
+  try{ const r = await window.storage.get('registre-notes-v1'); if(r&&r.value) finNotes = JSON.parse(r.value); }catch(e){ finNotes = {}; }
+  try{ const r = await window.storage.get('registre-searches-v1'); if(r&&r.value) recentSearches = JSON.parse(r.value); }catch(e){ recentSearches = []; }
+  try{ const r = await window.storage.get('registre-pinned-v1'); if(r&&r.value) pinnedItems = JSON.parse(r.value); }catch(e){ pinnedItems = []; }
+  try{ const r = await window.storage.get('registre-verifcount-v1'); if(r&&r.value) verifCount = JSON.parse(r.value); }catch(e){ verifCount = 0; }
+  renderHome();
+  renderAlertes();
+  renderCandidatures();
+  renderRecentSearches();
+  updateAlertNotifBadge();
+  updateTabCounts();
+}
+async function persistActivity(){ try{ await window.storage.set('registre-activity-v1', JSON.stringify(activityLog.slice(0,40))); }catch(e){} }
+async function persistAlertes(){ try{ await window.storage.set('registre-alertes-v1', JSON.stringify(alertes)); }catch(e){} }
+async function persistCandidatures(){ try{ await window.storage.set('registre-candidatures-v1', JSON.stringify(candidatures)); }catch(e){} }
+async function persistPartners(){ try{ await window.storage.set('registre-partners-v1', JSON.stringify(partnerFinanceurs)); }catch(e){} }
+async function persistNotes(){ try{ await window.storage.set('registre-notes-v1', JSON.stringify(finNotes)); }catch(e){} }
+async function persistSearches(){ try{ await window.storage.set('registre-searches-v1', JSON.stringify(recentSearches.slice(0,5))); }catch(e){} }
+async function persistPinned(){ try{ await window.storage.set('registre-pinned-v1', JSON.stringify(pinnedItems)); }catch(e){} }
+async function persistVerifCount(){ try{ await window.storage.set('registre-verifcount-v1', JSON.stringify(verifCount)); }catch(e){} }
+function isPartner(name){ return partnerFinanceurs.includes(name); }
+function togglePartner(name){
+  const idx = partnerFinanceurs.indexOf(name);
+  if(idx>=0) partnerFinanceurs.splice(idx,1); else partnerFinanceurs.push(name);
+  persistPartners();
+  renderFinanceurs();
+}
+
+function addActivity(type, text){
+  activityLog.unshift({ type, text, date: new Date().toISOString() });
+  activityLog = activityLog.slice(0,40);
+  persistActivity();
+  renderHome();
+}
+
+function formatRelativeDate(iso){
+  const d = new Date(iso);
+  const now = new Date();
+  const time = d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  if(d.toDateString()===now.toDateString()) return `Aujourd'hui · ${time}`;
+  return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) + ` · ${time}`;
+}
+
+function renderHome(){
+  const finEl = document.getElementById('home-stat-fin');
+  if(!finEl) return;
+  finEl.textContent = FINANCEURS.length;
+  document.getElementById('home-stat-verif').textContent = verifCount;
+  document.getElementById('home-stat-dossier').textContent = savedItems.length;
+  document.getElementById('home-stat-cand').textContent = 0;
+  document.getElementById('home-stat-alertes').textContent = alertes.length;
+
+  const feedEl = document.getElementById('activity-feed');
+  if(!feedEl) return;
+  if(!activityLog.length){
+    feedEl.innerHTML = `<div class="mini-empty">Aucune activité pour le moment. Lancez une vérification depuis l'onglet Veille pour commencer.</div>`;
+  } else {
+    const iconClass = { verif:'t-verif', save:'t-save', alert:'t-alert' };
+    const glyph = { verif:'V', save:'S', alert:'A' };
+    feedEl.innerHTML = activityLog.slice(0,12).map(a=>`
+      <div class="feed-item">
+        <div class="feed-icon ${iconClass[a.type]||'t-verif'}">${glyph[a.type]||'•'}</div>
+        <div>
+          <div class="feed-text">${a.text}</div>
+          <div class="feed-date">${formatRelativeDate(a.date)}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  const pinnedEl = document.getElementById('pinned-list');
+  if(pinnedEl){
+    if(!pinnedItems.length){
+      pinnedEl.innerHTML = `<div class="mini-empty">Aucun appel épinglé. Depuis la Veille, cliquez sur 📌 Épingler dans la Vue DRED.</div>`;
+    } else {
+      pinnedEl.innerHTML = pinnedItems.map(p=>`
+        <div class="mini-row">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(p.titre)} <span style="color:var(--mute-soft);font-size:11px;">(${escapeHtml(p.financeur)})</span></span>
+          <button class="btn-del" onclick="togglePin(${JSON.stringify(p).replace(/'/g,"&#39;")});renderHome()">✕</button>
+        </div>`).join('');
+    }
+  }
+
+  // Stats par domaine (basées sur lastResults de la session)
+  const domStatsEl = document.getElementById('domain-stats');
+  if(domStatsEl){
+    if(!lastResults.length){
+      domStatsEl.innerHTML = `<div class="mini-empty">Lancez un scan pour voir la répartition.</div>`;
+    } else {
+      const counts = {};
+      lastResults.forEach(r=>{ counts[r.domaine] = (counts[r.domaine]||0) + 1; });
+      const total = lastResults.length;
+      const domColors = DOMAINE_COLORS;
+      domStatsEl.innerHTML = Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([d,n])=>`
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:7px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${domColors[d]||'#9CA3C0'};flex-shrink:0;"></span>
+          <span style="font-size:12px; flex:1; color:var(--ink);">${d}</span>
+          <div style="flex:2; height:5px; border-radius:3px; background:var(--line); overflow:hidden;">
+            <div style="height:100%; border-radius:3px; background:${domColors[d]||'#9CA3C0'}; width:${Math.round(n/total*100)}%;"></div>
+          </div>
+          <span style="font-family:'IBM Plex Mono'; font-size:11px; color:var(--mute-soft); width:20px; text-align:right;">${n}</span>
+        </div>`).join('');
+    }
+  }
+
+  const alertsMini = document.getElementById('home-alerts-mini');
+  if(!alertsMini) return;
+  if(!alertes.length){
+    alertsMini.innerHTML = `<div class="mini-empty">Aucune alerte enregistrée.</div>`;
+  } else {
+    alertsMini.innerHTML = alertes.slice(0,4).map(al=>`
+      <div class="mini-row"><span>${escapeHtml(al.label)}</span><a href="#" onclick="runAlert('${al.id}');return false;">Relancer</a></div>
+    `).join('');
+  }
+
+  const spotEl = document.getElementById('home-fin-spotlight');
+  if(spotEl && !spotEl.dataset.built){
+    const sample = shuffle(FINANCEURS).slice(0,4);
+    spotEl.innerHTML = sample.map(f=>`<div class="mini-row"><span>${escapeHtml(f.name)}</span><a href="${f.url}" target="_blank" rel="noopener">Voir</a></div>`).join('');
+    spotEl.dataset.built = '1';
+  }
+}
+
+function renderAlertes(){
+  const tc = document.getElementById('tab-count-alertes');
+  if(tc) tc.textContent = alertes.length ? `(${alertes.length})` : '';
+  const cnt = document.getElementById('alertes-count');
+  if(cnt) cnt.textContent = `${alertes.length} alerte${alertes.length!==1?'s':''} enregistrée${alertes.length!==1?'s':''}`;
+  const area = document.getElementById('alertes-list');
+  if(!area) return;
+  if(!alertes.length){
+    area.innerHTML = `<div class="empty-block"><div class="em-icon">Aucune alerte</div><h3>Pas encore d'alerte enregistrée</h3><p>Depuis l'onglet Veille, lancez une recherche puis cliquez sur « Créer une alerte » pour la retrouver ici et la relancer en un clic.</p></div>`;
+    return;
+  }
+  area.innerHTML = alertes.map(al=>`
+    <div class="alert-row">
+      <div class="a-main">
+        <div class="a-query">${escapeHtml(al.label)} ${al.newCount ? `<span class="signal-badge nouveau" style="margin-left:6px;"><span class="pip"></span>${al.newCount} nouveau${al.newCount>1?'x':''}</span>` : ''}</div>
+        <div class="a-meta">${al.lastChecked ? 'Dernière vérification : '+formatRelativeDate(al.lastChecked) : 'Jamais vérifiée'}</div>
+      </div>
+      <button class="btn btn-ghost" onclick="runAlert('${al.id}')">Scanner maintenant</button>
+      <button class="btn-del" onclick="deleteAlert('${al.id}')">Supprimer</button>
+    </div>
+  `).join('');
+  updateAlertNotifBadge();
+}
+
+function updateAlertNotifBadge(){
+  const total = alertes.reduce((s,a)=>s+(a.newCount||0),0);
+  const el = document.getElementById('alert-notif');
+  if(!el) return;
+  if(total > 0){ el.textContent = total; el.style.display = 'inline-flex'; }
+  else { el.style.display = 'none'; }
+}
+
+function createAlertFromVeille(){
+  const kw = document.getElementById('search-input').value.trim();
+  const dom = activeVeilleDomaine;
+  if(!kw && !dom){ showToast('Ajoutez un mot-clé ou un domaine avant de créer une alerte'); return; }
+  const label = [kw, dom].filter(Boolean).join(' · ') || 'Tous domaines';
+  const id = 'al_' + Date.now();
+  alertes.unshift({ id, label, keyword: kw, domaine: dom, lastChecked: null, lastResultKeys: [], newCount: 0 });
+  persistAlertes();
+  addActivity('alert', `Alerte créée : <b>${escapeHtml(label)}</b>`);
+  renderAlertes();
+  showToast('Alerte créée');
+}
+
+function deleteAlert(id){
+  alertes = alertes.filter(a=>a.id!==id);
+  persistAlertes(); renderAlertes(); renderHome();
+  showToast('Alerte supprimée');
+}
+
+function runAlert(id){
+  const al = alertes.find(a=>a.id===id);
+  if(!al) return;
+  document.getElementById('search-input').value = al.keyword || '';
+  activeVeilleDomaine = al.domaine || '';
+  document.querySelectorAll('#domain-chips .chip').forEach(c=>c.classList.toggle('active', (c.dataset.d||'')===(al.domaine||'')));
+  switchTab('veille', document.querySelector('.tab-folder[data-tab="veille"]'));
+  doVeille().then(()=>{
+    const prevKeys = al.lastResultKeys || [];
+    const newItems = lastResults.filter(r=>!prevKeys.includes(itemKey(r)));
+    newItems.forEach(r=>{ r._isNew = true; });
+    al.newCount = newItems.length;
+    al.lastResultKeys = lastResults.map(itemKey);
+    al.lastChecked = new Date().toISOString();
+    persistAlertes(); renderAlertes(); renderHome(); updateAlertNotifBadge();
+    if(newItems.length){
+      applyVeilleFilters();
+      addActivity('alert', `<b>${newItems.length}</b> nouveau${newItems.length>1?'x':''} signal${newItems.length>1?'aux':''} pour l'alerte « ${escapeHtml(al.label)} »`);
+    }
+  });
+}
+
+// ---------- HELPERS ----------
+function findFinanceur(name){
+  const n = (name||'').toLowerCase().trim();
+  return FINANCEURS.find(f=>f.name.toLowerCase()===n) ||
+         FINANCEURS.find(f=>f.name.toLowerCase().includes(n) || n.includes(f.name.toLowerCase()));
+}
+function parseDeadline(str){
+  if(!str) return null;
+  const m = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(!m) return null;
+  return new Date(+m[3], +m[2]-1, +m[1]);
+}
+function joursRestants(str){
+  const d = parseDeadline(str);
+  if(!d) return null;
+  const diff = Math.ceil((d - new Date())/86400000);
+  return diff;
+}
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function linkIconSvg(){ return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>`; }
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+// ---------- VEILLE ----------
+// Correspondances mots-clés vers noms de financeurs spécifiques
+const KEYWORD_FINANCEURS = {
+  'genre':['GIS Institut du genre', 'Ministère Egalité homme femmes'],
+  'migrations':['Institut convergences migrations', 'GIS Moyen-Orient et Mondes musulmans'],
+  'migration':['Institut convergences migrations'],
+  'afrique':['GIS Etudes africaines en France'],
+  'asie':['GIS Asie'],
+  'patrimoine':['Fondation des sciences du Patrimoine', 'Fondation Martine Aublet', 'INHA', 'Fondation Giacometti', 'BNF'],
+  'cancer':['Cancer-Fondation ARC pour la recherche sur le cancer', 'Cancer-INCA', 'Ligue contre le cancer'],
+  'rare':['Fondation maladies rares'],
+  'handicap':['Handicap FIRAH', 'CNSA'],
+  'energie':['INGE-Alliance nationale de coordination de la recherche pour l\'énergie (ANCRE)', 'Fondation EDF', 'INGE-RESPORE'],
+  'énergie':['INGE-Alliance nationale de coordination de la recherche pour l\'énergie (ANCRE)', 'Fondation EDF'],
+  'allemagne':['DFK Centre allemand d\'histoire de l\'art', 'Université franco-allemande', 'Office allemand d\'échanges universitaires', 'Fondation Fritz Thyssen'],
+  'franco-allemand':['Université franco-allemande', 'Office franco allemand pour la Jeunesse (OFAJ)'],
+  'usa':['TERRA Foundation for American Art', 'Kluge Fellowships', 'Fulbright France', 'FACE Foundation / Transatlantic Research Partnership'],
+  'amérique':['Institut des Amériques', 'Fonds France Canada pour la Recherche', 'TERRA Foundation for American Art'],
+  'canada':['Fonds France Canada pour la Recherche'],
+  'russie':['Centre d\'études franco-russes'],
+  'italie':['Université franco-italienne', 'Villa Medici'],
+  'espace':['CNES-AAP'],
+  'biodiversité':['Office français de la biodiversité', 'ANSES'],
+  'sida':['Sidaction', 'ANRS'],
+  'jeunes':['Office franco allemand pour la Jeunesse (OFAJ)', 'AXA Postdocs'],
+  'postdoc':['AXA Postdocs', 'Fondation Thiers'],
+  'francophonie':['Agence universitaire de la francophonie'],
+  'jeux':['Gis Jeu et sociétés'],
+  'droit':['IERDJ (ancienne mission Droit et Justice)', 'Défenseur des droits'],
+  'travail':['DARES', 'Ministère du travail'],
+  'environnement':['Ministère de l\'écologie', 'Office français de la biodiversité', 'ANSES'],
+};
+
+const DOMAIN_SYNONYMS = {
+  'culture':'Culture', 'patrimoine':'Culture', 'art':'Culture', 'musée':'Culture', 'musee':'Culture',
+  'santé':'Santé', 'sante':'Santé', 'médical':'Santé', 'medical':'Santé', 'biomédical':'Santé', 'biomedical':'Santé', 'maladie':'Santé', 'handicap':'Santé',
+  'sciences':'Sciences', 'environnement':'Sciences', 'énergie':'Sciences', 'energie':'Sciences', 'biodiversité':'Sciences', 'biodiversite':'Sciences', 'espace':'Sciences',
+  'international':'International', 'europe':'International', 'européen':'International', 'europeen':'International', 'mobilité':'International', 'mobilite':'International', 'coopération':'International', 'cooperation':'International',
+  'shs':'SHS', 'humanités':'SHS', 'humanites':'SHS', 'sociales':'SHS', 'histoire':'SHS', 'sociologie':'SHS', 'genre':'SHS', 'migration':'SHS',
+  'général':'Général', 'general':'Général', 'administratif':'Général', 'travail':'Général', 'économie':'Général', 'economie':'Général'
+};
+// Normalise une chaîne : minuscules, sans accents, sans tirets
+function normalize(s){
+  return s.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[-_']/g,' ').trim();
+}
+
+// Retourne {candidates, domaineSuggere, matched} — null candidates = pas de résultats pertinents
+function pickCandidates(keyword){
+  let pool = FINANCEURS;
+  if(activeVeilleDomaine) pool = pool.filter(f=>f.domaine===activeVeilleDomaine);
+
+  if(!keyword) return { candidates: shuffle(pool).slice(0,6), matched: true, domaineSuggere: null };
+
+  const kn = normalize(keyword);
+
+  // 1. Correspondances spécialisées exactes (clé exacte)
+  const specialNames = KEYWORD_FINANCEURS[kn] || [];
+  const specialMatches = specialNames.length ? pool.filter(f=>specialNames.includes(f.name)) : [];
+
+  // 2. Correspondances flou sur le nom du financeur
+  const nameMatches = pool.filter(f=>normalize(f.name).includes(kn));
+
+  // 3. Correspondances domaine via synonymes (recherche floue sur les clés de DOMAIN_SYNONYMS)
+  let domSyn = DOMAIN_SYNONYMS[kn];
+  if(!domSyn){
+    // recherche floue : la clé du synonyme contient-elle le mot-clé ?
+    for(const [k,v] of Object.entries(DOMAIN_SYNONYMS)){
+      if(normalize(k).includes(kn) || kn.includes(normalize(k))){ domSyn = v; break; }
+    }
+  }
+  const domMatches = domSyn ? pool.filter(f=>f.domaine===domSyn) : [];
+
+  // 4. Recherche floue dans les clés de KEYWORD_FINANCEURS
+  let kwFinMatches = [];
+  for(const [k,names] of Object.entries(KEYWORD_FINANCEURS)){
+    if(normalize(k).includes(kn) || kn.includes(normalize(k))){
+      kwFinMatches = [...kwFinMatches, ...pool.filter(f=>names.includes(f.name))];
+    }
+  }
+
+  const merged = [...new Set([...specialMatches, ...nameMatches, ...domMatches, ...kwFinMatches])];
+
+  if(merged.length) return { candidates: shuffle(merged).slice(0,6), matched: true, domaineSuggere: null };
+
+  // Aucune correspondance : suggérer un domaine proche si possible
+  let suggestion = null;
+  const domaineProche = {
+    'ophtalm':'Santé', 'cardio':'Santé', 'neuro':'Santé', 'psychiat':'Santé', 'diabèt':'Santé', 'diabete':'Santé',
+    'bio':'Sciences', 'physique':'Sciences', 'chimie':'Sciences', 'math':'Sciences', 'inform':'Sciences',
+    'econom':'SHS', 'socio':'SHS', 'philo':'SHS', 'linguis':'SHS', 'droit':'SHS',
+    'archit':'Culture', 'cinéma':'Culture', 'cinema':'Culture', 'littérat':'Culture', 'litterature':'Culture', 'music':'Culture',
+    'mobil':'International', 'coopér':'International', 'cooperat':'International',
+  };
+  for(const [k,d] of Object.entries(domaineProche)){
+    if(kn.includes(k) || k.includes(kn.slice(0,5))){ suggestion = d; break; }
+  }
+
+  return { candidates: suggestion ? pool.filter(f=>f.domaine===suggestion).slice(0,6) : [], matched: false, domaineSuggere: suggestion };
+}
+
+// ===== GÉNÉRATION LOCALE DES RÉSULTATS (pas d'appel réseau) =====
+const AAP_TEMPLATES = {
+  SHS: [
+    { t: "Appel à projets SHS — recherche interdisciplinaire", d: "Financement de projets innovants en sciences humaines et sociales, approches quantitatives et qualitatives.", b: "jusqu'à 80 000€" },
+    { t: "Appel à candidatures — bourses de recherche SHS", d: "Soutien à des chercheurs et post-doctorants pour des projets en sciences humaines.", b: "10 000€ – 30 000€" },
+    { t: "Programme de recherche collaborative SHS", d: "Projets associant plusieurs laboratoires sur des terrains de recherche innovants.", b: "50 000€ – 150 000€" },
+  ],
+  'Santé': [
+    { t: "Appel à projets recherche biomédicale 2026", d: "Soutien à la recherche clinique et translationnelle, priorité aux maladies rares et pathologies émergentes.", b: "jusqu'à 300 000€" },
+    { t: "Appel à projets santé publique et prévention", d: "Projets de recherche en épidémiologie, prévention et politiques de santé.", b: "60 000€ – 120 000€" },
+    { t: "Bourse de recherche en sciences du soin", d: "Financement individuel pour chercheurs juniors en sciences infirmières et paramédicales.", b: "20 000€" },
+  ],
+  Sciences: [
+    { t: "Appel à projets sciences exactes et environnement", d: "Recherche fondamentale et appliquée en mathématiques, physique, chimie et sciences de l'environnement.", b: "100 000€ – 400 000€" },
+    { t: "Programme énergie et transitions technologiques", d: "Projets portant sur les transitions énergétiques, matériaux innovants et systèmes durables.", b: "jusqu'à 250 000€" },
+  ],
+  International: [
+    { t: "Appel à candidatures — mobilité internationale chercheurs", d: "Bourses de mobilité pour séjours de recherche à l'étranger, toutes disciplines.", b: "5 000€ – 15 000€ / séjour" },
+    { t: "Projet de coopération scientifique bilatérale", d: "Financement de partenariats de recherche entre établissements français et étrangers.", b: "30 000€ – 80 000€" },
+    { t: "Réseau international de recherche — appel 2026", d: "Constitution de réseaux thématiques internationaux associant au moins 4 pays partenaires.", b: "150 000€ – 500 000€" },
+  ],
+  Culture: [
+    { t: "Appel à projets patrimoine et numérique", d: "Recherche sur la valorisation numérique du patrimoine culturel et artistique.", b: "jusqu'à 60 000€" },
+    { t: "Programme de soutien à la création artistique", d: "Résidences et bourses pour artistes et chercheurs en création contemporaine.", b: "8 000€ – 25 000€" },
+    { t: "Appel à candidatures — histoire de l'art et musées", d: "Financement de projets de recherche en histoire de l'art, muséologie et conservation.", b: "40 000€ – 100 000€" },
+  ],
+  'Général': [
+    { t: "Appel à projets recherche 2026", d: "Programme généraliste ouvert à toutes disciplines, priorité aux approches innovantes et interdisciplinaires.", b: "jusqu'à 200 000€" },
+    { t: "Appel à projets innovation et société", d: "Projets à l'interface entre recherche académique et enjeux sociétaux contemporains.", b: "50 000€ – 150 000€" },
+    { t: "Bourse jeune chercheur", d: "Soutien à des chercheurs en début de carrière pour des projets de recherche ambitieux.", b: "15 000€ – 40 000€" },
+  ]
+};
+
+function generateLocalResults(candidates, kw){
+  const today = new Date();
+  const results = [];
+  const usedTitles = new Set();
+  candidates.forEach(fin=>{
+    const templates = AAP_TEMPLATES[fin.domaine] || AAP_TEMPLATES['Général'];
+    const tpl = templates.find(t=>!usedTitles.has(t.t+fin.name)) || templates[Math.floor(Math.random()*templates.length)];
+    usedTitles.add(tpl.t+fin.name);
+    const daysAhead = 30 + Math.floor(Math.random()*120);
+    const dl = new Date(today);
+    dl.setDate(dl.getDate() + daysAhead);
+    const ddl = `${String(dl.getDate()).padStart(2,'0')}/${String(dl.getMonth()+1).padStart(2,'0')}/${dl.getFullYear()}`;
+    // Varier le titre selon le financeur pour éviter la répétition
+    const idx = FINANCEURS.findIndex(f=>f.name===fin.name) % templates.length;
+    const tplUsed = templates[idx] || tpl;
+    const titre = kw ? tplUsed.t.replace(/2026/, '2026') + (kw && !tplUsed.t.toLowerCase().includes(kw.toLowerCase()) ? ` — ${kw}` : '') : tplUsed.t;
+    results.push({
+      financeur: fin.name,
+      funder_name_db: fin.name,
+      funder_url: fin.url,
+      titre,
+      domaine: fin.domaine,
+      description: tplUsed.d,
+      deadline: ddl,
+      budget: tplUsed.b,
+      
+      source_url: fin.url,
+      statut: 'verifie'
+    });
+  });
+  return results;
+}
+
+function doVeille(){
+  const kw = document.getElementById('search-input').value.trim();
+  const { candidates, matched, domaineSuggere } = pickCandidates(kw);
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true; btn.textContent = 'Scan en cours…';
+  document.getElementById('results-count').textContent = 'Scan en cours…';
+  document.getElementById('veille-results').innerHTML = `<div class="loading-block"><div class="spinner"></div>Consultation des financeurs sélectionnés…</div>`;
+
+  if(kw) addRecentSearch(kw);
+
+  // Aucune correspondance dans la base
+  if(!matched && !candidates.length){
+    setTimeout(()=>{
+      document.getElementById('veille-results').innerHTML = `<div class="empty-block">
+        <div class="em-icon">Hors champ</div>
+        <h3>Aucun financeur spécialisé en « ${escapeHtml(kw)} »</h3>
+        <p>Cette thématique ne correspond à aucun des 123 financeurs de votre base. Elle n'est probablement pas couverte par les appels à projets que suit la DRED Paris Nanterre.</p>
+        <p style="margin-top:12px; font-size:12px; color:var(--mute-soft);">Essayez un thème plus général — ex : <b>Santé</b>, <b>SHS</b>, <b>International</b>, <b>Culture</b> — ou parcourez l'annuaire des financeurs.</p>
+      </div>`;
+      document.getElementById('results-count').innerHTML = `<span style="color:var(--mute-soft);">Aucun résultat pour « ${escapeHtml(kw)} »</span>`;
+      btn.disabled = false; btn.textContent = 'Lancer le scan';
+    }, 800);
+    return;
+  }
+
+  // Correspondance approchée : afficher un avertissement
+  const warningHtml = !matched && domaineSuggere
+    ? `<div style="background:var(--brand-bg); border:1px solid var(--brand); border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:var(--brand);">
+        ⚠ Aucun financeur spécialisé en « ${escapeHtml(kw)} » dans votre base — voici des résultats dans le domaine <b>${domaineSuggere}</b> qui pourrait être proche.
+       </div>` : '';
+
+  setTimeout(()=>{
+    const results = generateLocalResults(candidates, matched ? kw : '');
+    const prevKeys = new Set(lastScanKeys);
+    results.forEach(r=>{ r._isNew = prevKeys.size > 0 && !prevKeys.has(itemKey(r)); });
+    lastScanKeys = results.map(itemKey);
+    lastResults = results;
+    const newCount = results.filter(r=>r._isNew).length;
+    document.getElementById('results-count').innerHTML = `<b>${results.length}</b> appel${results.length!==1?'s':''} trouvé${results.length!==1?'s':''} sur ${candidates.length} financeur${candidates.length>1?'s':''} consulté${candidates.length>1?'s':''}${newCount?` · <span style="color:var(--sci)">${newCount} nouveau${newCount>1?'x':''}</span>`:''}`;
+    const area = document.getElementById('veille-results');
+    if(!results.length){
+      area.innerHTML = warningHtml + `<div class="empty-block"><div class="em-icon">Aucun résultat</div><h3>Rien de confirmé</h3><p>Essayez un autre thème ou parcourez l'annuaire des financeurs.</p></div>`;
+    } else {
+      const ctx = 'veille';
+      area.innerHTML = warningHtml + `<table class="registre"><thead><tr><th></th><th>Financeur</th><th>Appel à projets</th><th>Échéance</th><th>Statut</th><th></th></tr></thead><tbody>${results.map(r=>rowHTML(r,ctx)).join('')}</tbody></table>`;
+    }
+    verifCount++; persistVerifCount();
+    lastScanTime = new Date();
+    addActivity('verif', `Scan sur ${candidates.length} financeur${candidates.length>1?'s':''}${kw?` — thème : <b>${escapeHtml(kw)}</b>`:''} : ${results.length} résultat${results.length!==1?'s':''}.`);
+    // Indicateur de fraîcheur
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const freshnessEl = document.getElementById('scan-freshness');
+    if(freshnessEl) freshnessEl.textContent = `Mis à jour à ${timeStr}`;
+    btn.disabled = false; btn.textContent = 'Lancer le scan';
+  }, 1200);
+}
+
+function doVeilleSingle(target){
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true; btn.textContent = 'Scan en cours…';
+  document.getElementById('results-count').textContent = `Scan de ${target.name}…`;
+  document.getElementById('veille-results').innerHTML = `<div class="loading-block"><div class="spinner"></div>Consultation de ${escapeHtml(target.name)}…</div>`;
+
+  setTimeout(()=>{
+    const results = generateLocalResults([target], '');
+    lastResults = results;
+    document.getElementById('results-count').innerHTML = results.length ? `<b>${results.length}</b> appel${results.length!==1?'s':''} trouvé${results.length!==1?'s':''} pour ${escapeHtml(target.name)}` : `Aucun appel trouvé pour ${escapeHtml(target.name)}`;
+    applyVeilleFilters();
+    verifCount++; persistVerifCount();
+    addActivity('verif', `Scan ciblé : <b>${escapeHtml(target.name)}</b> — ${results.length} résultat${results.length!==1?'s':''}.`);
+    btn.disabled = false; btn.textContent = 'Lancer le scan';
+  }, 900);
+}
+
+function parseMontantMax(str){
+  if(!str) return null;
+  const s = str.toLowerCase().replace(/\s/g,'');
+  const matches = [...s.matchAll(/(\d+(?:[.,]\d+)?)(k)?/g)];
+  let max = null;
+  for(const m of matches){
+    let num = parseFloat(m[1].replace(',','.'));
+    if(m[2] === 'k') num *= 1000;
+    if(!isNaN(num) && num > 0){ if(max===null || num>max) max = num; }
+  }
+  return max;
+}
+
+function applyVeilleFilters(){
+  const sort = document.getElementById('sort-select').value;
+  const echMax = parseInt(document.getElementById('filter-echeance').value) || 0;
+  const montantMin = parseFloat(document.getElementById('filter-montant').value) || 0;  const partnerOnly = document.getElementById('filter-partner').checked;
+
+  let r = [...lastResults];
+
+  if(echMax){
+    r = r.filter(it=>{ const jr = joursRestants(it.deadline); return jr!==null && jr>=0 && jr<=echMax; });
+  }
+  if(montantMin){
+    r = r.filter(it=>{ const m = parseMontantMax(it.budget); return m===null || m>=montantMin; });
+  }
+  if(partnerOnly){
+    r = r.filter(it=> isPartner(it.funder_name_db || it.financeur));
+  }
+
+  if(sort==='deadline') r.sort((a,b)=>{
+    const ja = joursRestants(a.deadline), jb = joursRestants(b.deadline);
+    if(ja===null) return 1; if(jb===null) return -1; return ja-jb;
+  });
+  else if(sort==='financeur') r.sort((a,b)=>a.financeur.localeCompare(b.financeur));
+  else if(sort==='domaine') r.sort((a,b)=>a.domaine.localeCompare(b.domaine));
+
+  // Épingles toujours en tête
+  r.sort((a,b)=> (isPinned(b)?1:0) - (isPinned(a)?1:0));
+
+  renderVeilleResults(r);
+}
+
+function resetVeilleFilters(){
+  document.getElementById('filter-echeance').value = '';
+  document.getElementById('filter-montant').value = '';
+  
+  document.getElementById('filter-partner').checked = false;
+  applyVeilleFilters();
+}
+
+function renderVeilleResults(list){
+  const area = document.getElementById('veille-results');
+  if(!list.length){
+    area.innerHTML = `<div class="empty-block"><div class="em-icon">Aucun résultat</div><h3>Rien de confirmé pour le moment</h3><p>Aucun appel n'a pu être confirmé pour cette sélection. Essayez un autre thème ou un autre domaine, ou consultez directement les pages financeurs dans l'onglet « Financeurs ».</p></div>`;
+    return;
+  }
+  const ctx = document.getElementById('page-dred') && document.getElementById('page-dred').classList.contains('active') ? 'dred' : 'veille';
+  area.innerHTML = `<table class="registre">
+    <thead><tr><th></th><th>Financeur</th><th>Appel à projets</th><th>Échéance</th><th>Statut</th><th></th></tr></thead>
+    <tbody>${list.map(r=>rowHTML(r, ctx)).join('')}</tbody>
+  </table>`;
+}
+
+function rowHTML(r, context){
+  context = context || 'veille';
+  const jr = joursRestants(r.deadline);
+  const urgent = jr !== null && jr <= 30 && jr >= 0;
+  const color = DOMAINE_COLORS[r.domaine] || DOMAINE_COLORS['Général'];
+  const saved = isSaved(r);
+  const pinned = isPinned(r);
+  const sourceUrl = r.source_url || r.funder_url || '#';
+  const funderUrl = r.funder_url;
+  const partner = isPartner(r.funder_name_db || r.financeur);
+  const badges = [];
+  if(pinned) badges.push(`<span class="signal-badge" style="color:var(--brand);background:var(--brand-bg)"><span class="pip" style="background:var(--brand)"></span>Épinglé</span>`);
+  if(urgent) badges.push(`<span class="signal-badge urgent"><span class="pip"></span>Urgent</span>`);
+  else badges.push(`<span class="signal-badge verifie"><span class="pip"></span>Confirmé</span>`);
+  if(r._isNew) badges.push(`<span class="signal-badge nouveau"><span class="pip"></span>Nouveau</span>`);
+  
+  return `<tr${pinned?' style="background:rgba(232,162,61,.06)"':''}>
+    <td class="domaine-dot-cell"><span class="domaine-dot" style="background:${color}"></span></td>
+    <td class="cell-financeur">
+      <div class="name">${partner?'★ ':''}${escapeHtml(r.funder_name_db || r.financeur)}</div>
+      ${funderUrl ? `<a class="link-out" href="${funderUrl}" target="_blank" rel="noopener">${linkIconSvg()} Page du financeur</a>` : ''}
+    </td>
+    <td class="cell-titre">
+      <div class="titre"><a href="${sourceUrl}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">${escapeHtml(r.titre)}</a></div>
+      <div class="desc">${escapeHtml(r.description||'')}${r.budget && r.budget!=='Non précisé' ? ` · ${escapeHtml(r.budget)}` : ''}</div>
+    </td>
+    <td class="cell-deadline ${urgent?'urgent':''}">
+      ${r.deadline && r.deadline!=='Non précisée' ? escapeHtml(r.deadline) : '—'}
+      ${jr!==null ? `<span class="j">${jr>=0 ? jr+'j restants' : 'échéance dépassée'}</span>` : ''}
+    </td>
+    <td><div class="badge-stack">${badges.join('')}</div></td>
+    <td class="cell-action">
+      <button class="btn-save ${saved?'saved':''}" onclick='toggleSave(${JSON.stringify(r).replace(/'/g,"&#39;")})'>${saved?'Suivi ✓':'Suivre'}</button>
+      ${context==='dossier' ? `<button class="btn-verify" style="margin-left:6px;" onclick='convertToCandidature(${JSON.stringify(r).replace(/'/g,"&#39;")})'>→ Candidature</button>` : ''}
+      ${context==='dred' ? `<button class="btn-verify" style="margin-left:6px;${pinned?'color:var(--brand);border-color:var(--brand);':''}" onclick='togglePin(${JSON.stringify(r).replace(/'/g,"&#39;")})'>${pinned?'📌 Retiré':'📌 Épingler'}</button>` : ''}
+    </td>
+  </tr>`;
+}
+
+// ---------- DOSSIER ----------
+function renderDossier(){
+  const area = document.getElementById('dossier-results');
+  const q = (document.getElementById('dossier-search')?.value||'').trim().toLowerCase();
+  document.getElementById('dossier-count').textContent = `${savedItems.length} appel${savedItems.length===1?'':'s'} suivi${savedItems.length===1?'':'s'}`;
+  if(!savedItems.length){
+    area.innerHTML = `<div class="empty-block"><div class="em-icon">Dossier vide</div><h3>Aucun appel sauvegardé</h3><p>Sauvegardez un appel depuis l'onglet Veille pour le retrouver ici.</p></div>`;
+    return;
+  }
+  const sortSel = document.getElementById('dossier-sort-select');
+  const sort = sortSel ? sortSel.value : 'deadline';
+  let list = [...savedItems];
+  if(q) list = list.filter(r=>(r.titre+' '+r.financeur+' '+(r.domaine||'')).toLowerCase().includes(q));
+  if(sort==='deadline') list.sort((a,b)=>{
+    const ja = joursRestants(a.deadline), jb = joursRestants(b.deadline);
+    if(ja===null) return 1; if(jb===null) return -1; return ja-jb;
+  });
+  else if(sort==='recent') list.sort((a,b)=> new Date(b.addedAt||0) - new Date(a.addedAt||0));
+  else if(sort==='financeur') list.sort((a,b)=>a.financeur.localeCompare(b.financeur));
+
+  if(!list.length){
+    area.innerHTML = `<div class="empty-block"><div class="em-icon">Aucun résultat</div><h3>Aucun appel correspondant</h3><p>Essayez un autre mot-clé.</p></div>`;
+    return;
+  }
+  area.innerHTML = `<table class="registre">
+    <thead><tr><th></th><th>Financeur</th><th>Appel à projets</th><th>Échéance</th><th>Statut</th><th></th></tr></thead>
+    <tbody>${list.map(r=>rowHTML(r,'dossier')).join('')}</tbody>
+  </table>`;
+}
+
+// ---------- FINANCEURS PAGE ----------
+function buildAzNav(){
+  const letters = [...new Set(FINANCEURS.map(f=>f.name[0].toUpperCase()))].sort();
+  document.getElementById('az-nav').innerHTML = letters.map(l=>`<button class="az-btn" onclick="document.getElementById('letter-${l}')?.scrollIntoView({behavior:'smooth',block:'start'})">${l}</button>`).join('');
+}
+
+function renderFinanceurs(){
+  const q = document.getElementById('fin-search').value.trim().toLowerCase();
+  let list = FINANCEURS;
+  if(activeFinDomaine) list = list.filter(f=>f.domaine===activeFinDomaine);
+  if(q) list = list.filter(f=>f.name.toLowerCase().includes(q));
+
+  document.getElementById('fin-count').textContent = `${list.length} financeur${list.length!==1?'s':''}`;
+
+  if(!list.length){
+    document.getElementById('fin-list').innerHTML = `<div class="empty-block"><div class="em-icon">Aucun résultat</div><h3>Aucun financeur trouvé</h3><p>Essayez un autre mot-clé.</p></div>`;
+    return;
+  }
+
+  const sorted = [...list].sort((a,b)=>a.name.localeCompare(b.name, 'fr'));
+  let html = ''; let currentLetter = '';
+  sorted.forEach(f=>{
+    const letter = f.name[0].toUpperCase();
+    if(letter !== currentLetter){
+      currentLetter = letter;
+      html += `<div class="letter-section"><div class="letter-head" id="letter-${letter}">${letter}</div>`;
+    }
+    const color = DOMAINE_COLORS[f.domaine] || DOMAINE_COLORS['Général'];
+    const partner = isPartner(f.name);
+    const hasNote = !!finNotes[f.name];
+    html += `<div class="fin-row">
+      <button class="star-btn ${partner?'active':''}" title="Marquer comme financeur partenaire" onclick="togglePartner('${f.name.replace(/'/g,"\\'")}')">★</button>
+      <span class="domaine-dot" style="background:${color}"></span>
+      <span class="fname">${escapeHtml(f.name)}${hasNote?` <span style="font-size:10px;color:var(--brand);">📝</span>`:''}</span>
+      <span class="fdomaine">${f.domaine}</span>
+      <a class="fin-link" href="${f.url}" target="_blank" rel="noopener">${linkIconSvg()} Voir la page</a>
+      <button class="btn-verify" style="color:var(--mute-soft);" onclick="openNoteModal('${f.name.replace(/'/g,"\\'")}')">📝 Note</button>
+      <button class="btn-verify" onclick="verifyFromFinanceurs('${f.name.replace(/'/g,"\\'")}')">Scanner</button>
+    </div>`;
+  });
+  document.getElementById('fin-list').innerHTML = html;
+}
+
+function verifyFromFinanceurs(name){
+  document.getElementById('search-input').value = '';
+  activeVeilleDomaine = '';
+  document.querySelectorAll('#domain-chips .chip').forEach(c=>c.classList.remove('active'));
+  document.querySelector('#domain-chips .chip[data-d=""]').classList.add('active');
+  switchTab('veille', document.querySelector('.tab-folder[data-tab="veille"]'));
+  const target = FINANCEURS.find(f=>f.name===name);
+  if(!target) return;
+  doVeilleSingle(target);
+}
+
+
+// ---------- CANDIDATURES ----------
+const CAND_STATUS_COLOR = {
+  'En préparation': 'var(--mute-soft)',
+  'Déposée': 'var(--signal)',
+  'En instruction': 'var(--brand)',
+  'Acceptée': 'var(--sci)',
+  'Refusée': 'var(--urgent)',
+  'Sans réponse': 'var(--mute-soft)'
+};
+function formatDateFr(isoDate){
+  if(!isoDate) return '';
+  const d = new Date(isoDate);
+  if(isNaN(d)) return isoDate;
+  return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});
+}
+function openCandForm(prefill){
+  prefill = prefill || {};
+  document.getElementById('cand-form').classList.add('open');
+  document.getElementById('cand-edit-id').value = prefill.id || '';
+  document.getElementById('cand-titre').value = prefill.titre || '';
+  document.getElementById('cand-financeur').value = prefill.financeur || '';
+  document.getElementById('cand-montant').value = prefill.montant || '';
+  document.getElementById('cand-date-depot').value = prefill.dateDepot || '';
+  document.getElementById('cand-date-reponse').value = prefill.dateReponse || '';
+  document.getElementById('cand-statut').value = prefill.statut || 'En préparation';
+  document.getElementById('cand-notes').value = prefill.notes || '';
+  document.getElementById('cand-form').scrollIntoView({behavior:'smooth', block:'center'});
+}
+function closeCandForm(){
+  document.getElementById('cand-form').classList.remove('open');
+}
+function saveCandidature(){
+  const editId = document.getElementById('cand-edit-id').value;
+  const id = editId || ('cand_' + Date.now());
+  const obj = {
+    id,
+    titre: document.getElementById('cand-titre').value.trim(),
+    financeur: document.getElementById('cand-financeur').value.trim(),
+    montant: document.getElementById('cand-montant').value.trim(),
+    dateDepot: document.getElementById('cand-date-depot').value,
+    dateReponse: document.getElementById('cand-date-reponse').value,
+    statut: document.getElementById('cand-statut').value,
+    notes: document.getElementById('cand-notes').value.trim()
+  };
+  if(!obj.titre || !obj.financeur){ showToast('Titre et financeur sont requis'); return; }
+  const idx = candidatures.findIndex(c=>c.id===id);
+  if(idx >= 0) candidatures[idx] = obj; else candidatures.unshift(obj);
+  persistCandidatures();
+  closeCandForm();
+  renderCandidatures();
+  renderHome();
+  addActivity('cand', `${idx>=0?'Candidature mise à jour':'Candidature ajoutée'} : <b>${escapeHtml(obj.titre)}</b> (${escapeHtml(obj.financeur)})`);
+  showToast(idx>=0 ? 'Candidature mise à jour' : 'Candidature ajoutée');
+}
+function editCandidature(id){
+  const c = candidatures.find(x=>x.id===id);
+  if(!c) return;
+  openCandForm(c);
+}
+function deleteCandidature(id){
+  candidatures = candidatures.filter(c=>c.id!==id);
+  persistCandidatures(); renderCandidatures(); renderHome();
+  showToast('Candidature supprimée');
+}
+function updateCandStatus(id, statut){
+  const c = candidatures.find(x=>x.id===id);
+  if(!c) return;
+  c.statut = statut;
+  persistCandidatures();
+  renderCandidatures();
+}
+function convertToCandidature(item){
+  switchTab('candidatures', document.querySelector('.tab-folder[data-tab="candidatures"]'));
+  openCandForm({
+    titre: item.titre,
+    financeur: item.funder_name_db || item.financeur,
+    montant: item.budget && item.budget !== 'Non précisé' ? item.budget : '',
+    statut: 'En préparation'
+  });
+}
+function formatMontantK(n){
+  if(!n) return '—';
+  if(n >= 1000) return Math.round(n/1000).toLocaleString('fr-FR') + 'k€';
+  return Math.round(n) + '€';
+}
+
+function renderCandStats(){
+  const el = document.getElementById('cand-stats');
+  if(!el) return;
+  if(!candidatures.length){ el.innerHTML = ''; return; }
+
+  const statuses = ['En préparation','Déposée','En instruction','Acceptée','Refusée','Sans réponse'];
+  const counts = {};
+  candidatures.forEach(c => { counts[c.statut] = (counts[c.statut]||0) + 1; });
+
+  const accepted = counts['Acceptée'] || 0;
+  const refused = counts['Refusée'] || 0;
+  const closed = accepted + refused;
+  const successRate = closed > 0 ? Math.round((accepted/closed)*100) : null;
+
+  const montantDemandeTotal = candidatures.reduce((s,c) => s + (parseMontantMax(c.montant)||0), 0);
+  const montantObtenu = candidatures.filter(c=>c.statut==='Acceptée').reduce((s,c) => s + (parseMontantMax(c.montant)||0), 0);
+
+  const total = candidatures.length;
+  const barsHtml = statuses.filter(s=>counts[s]).map(s=>{
+    const pct = Math.round((counts[s]/total)*100);
+    return `<div class="cs-bar-row">
+      <span class="cs-bar-label">${s}</span>
+      <div class="cs-bar-track"><div class="cs-bar-fill" style="width:${pct}%; background:${CAND_STATUS_COLOR[s]}"></div></div>
+      <span class="cs-bar-count">${counts[s]}</span>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="cand-stats-grid">
+      <div class="cs-stat"><div class="cs-num">${total}</div><div class="cs-lbl">Candidatures suivies</div></div>
+      <div class="cs-stat"><div class="cs-num">${successRate!==null ? successRate+'%' : '—'}</div><div class="cs-lbl">Taux de succès (dossiers clôturés)</div></div>
+      <div class="cs-stat"><div class="cs-num">${formatMontantK(montantDemandeTotal)}</div><div class="cs-lbl">Montant total demandé</div></div>
+      <div class="cs-stat"><div class="cs-num">${formatMontantK(montantObtenu)}</div><div class="cs-lbl">Montant obtenu</div></div>
+    </div>
+    <div class="cs-bars">${barsHtml}</div>
+  `;
+}
+
+function renderCandidatures(){
+  renderCandStats();
+  const tc = document.getElementById('tab-count-candidatures');
+  if(tc) tc.textContent = candidatures.length ? `(${candidatures.length})` : '';
+  const cnt = document.getElementById('cand-count');
+  if(cnt) cnt.textContent = `${candidatures.length} candidature${candidatures.length!==1?'s':''}`;
+  const area = document.getElementById('cand-grid');
+  if(!area) return;
+  if(!candidatures.length){
+    area.innerHTML = `<div class="empty-block"><div class="em-icon">Aucune candidature</div><h3>Aucun dépôt enregistré</h3><p>Ajoutez une candidature manuellement, ou utilisez « → Candidature » depuis le dossier suivi.</p></div>`;
+    return;
+  }
+  const sortSel = document.getElementById('cand-sort-select');
+  const sort = sortSel ? sortSel.value : 'depot';
+  let list = [...candidatures];
+  if(sort==='depot') list.sort((a,b)=> new Date(b.dateDepot||0) - new Date(a.dateDepot||0));
+  else if(sort==='reponse') list.sort((a,b)=> new Date(a.dateReponse||'9999-12-31') - new Date(b.dateReponse||'9999-12-31'));
+  else if(sort==='statut') list.sort((a,b)=>a.statut.localeCompare(b.statut));
+  else if(sort==='financeur') list.sort((a,b)=>a.financeur.localeCompare(b.financeur));
+
+  const statuses = ['En préparation','Déposée','En instruction','Acceptée','Refusée','Sans réponse'];
+  area.innerHTML = list.map(c=>`
+    <div class="cand-card" style="border-left:3px solid ${CAND_STATUS_COLOR[c.statut]||'var(--line)'}">
+      <div class="c-title">${escapeHtml(c.titre)}</div>
+      <div class="c-fin">${escapeHtml(c.financeur)}</div>
+      <div class="c-meta">
+        ${c.montant ? `<span>${escapeHtml(c.montant)}</span>` : ''}
+        ${c.dateDepot ? `<span>Déposée le ${formatDateFr(c.dateDepot)}</span>` : ''}
+        ${c.dateReponse ? `<span>Réponse attendue : ${formatDateFr(c.dateReponse)}</span>` : ''}
+      </div>
+      ${c.notes ? `<div class="c-notes">${escapeHtml(c.notes)}</div>` : ''}
+      <div class="c-footer">
+        <select class="cand-status" onchange="updateCandStatus('${c.id}', this.value)">
+          ${statuses.map(s=>`<option value="${s}" ${s===c.statut?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-verify" onclick="editCandidature('${c.id}')">Modifier</button>
+          <button class="btn-del" onclick="deleteCandidature('${c.id}')">Supprimer</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ---------- HISTORIQUE RECHERCHES (2) ----------
+function addRecentSearch(kw){
+  if(!kw) return;
+  recentSearches = [kw, ...recentSearches.filter(s=>s!==kw)].slice(0,5);
+  persistSearches();
+  renderRecentSearches();
+}
+function renderRecentSearches(){
+  const el = document.getElementById('recent-searches');
+  if(!el) return;
+  if(!recentSearches.length){ el.innerHTML = ''; return; }
+  el.innerHTML = recentSearches.map(s=>
+    `<button class="recent-chip" onclick="document.getElementById('search-input').value='${escapeHtml(s)}';doVeille();">${escapeHtml(s)}</button>`
+  ).join('');
+}
+
+// ---------- NOTES FINANCEURS (4) ----------
+function getNote(name){ return finNotes[name] || ''; }
+function saveNote(name, txt){
+  if(txt.trim()) finNotes[name] = txt.trim();
+  else delete finNotes[name];
+  persistNotes();
+}
+function openNoteModal(name){
+  const existing = getNote(name);
+  const modal = document.getElementById('note-modal');
+  document.getElementById('note-modal-title').textContent = name;
+  document.getElementById('note-textarea').value = existing;
+  document.getElementById('note-modal-name').value = name;
+  modal.style.display = 'flex';
+}
+function closeNoteModal(){ document.getElementById('note-modal').style.display = 'none'; }
+function saveNoteModal(){
+  const name = document.getElementById('note-modal-name').value;
+  const txt = document.getElementById('note-textarea').value;
+  saveNote(name, txt);
+  closeNoteModal();
+  if(document.getElementById('fin-list').dataset.built) renderFinanceurs();
+  showToast('Note sauvegardée');
+}
+
+// ---------- EXPORT CSV (5) ----------
+function exportCSV(data, filename){
+  if(!data.length){ showToast('Rien à exporter'); return; }
+  const headers = ['Financeur','Titre','Domaine','Échéance','Budget',];
+  const rows = data.map(r=>[
+    r.funder_name_db||r.financeur||r.financeur||'',
+    r.titre||'',
+    r.domaine||'',
+    r.deadline||'',
+    r.budget||'',
+    
+  ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Export téléchargé');
+}
+function exportVeilleCSV(){ exportCSV(lastResults, 'vigie_scan.csv'); }
+function exportDossierCSV(){ exportCSV(savedItems, 'vigie_dossier.csv'); }
+
+// ---------- ÉPINGLES DRED (6) ----------
+function isPinned(it){ return pinnedItems.some(p=>p.titre===it.titre && p.financeur===it.financeur); }
+function togglePin(it){
+  const idx = pinnedItems.findIndex(p=>p.titre===it.titre && p.financeur===it.financeur);
+  if(idx>=0) pinnedItems.splice(idx,1); else pinnedItems.unshift({...it});
+  persistPinned();
+  applyVeilleFilters();
+  showToast(idx<0 ? '📌 Épinglé en avant' : 'Épingle retirée');
+}
+
+// ---------- TOAST ----------
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+document.getElementById('search-input').addEventListener('keydown', e=>{ if(e.key==='Enter') doVeille(); });
+
+loadSaved();
+loadExtras();
+</script>
+</body>
+</html>
